@@ -20,7 +20,7 @@ public class MainActivity extends Activity {
     protected void onCreate(Bundle state) {
         super.onCreate(state);
         web = new WebView(this);
-        web.setBackgroundColor(Color.parseColor("#11131B"));
+        web.setBackgroundColor(Color.parseColor("#0E0B15"));
         WebSettings s = web.getSettings();
         s.setJavaScriptEnabled(true);
         s.setDomStorageEnabled(true);
@@ -46,7 +46,7 @@ public class MainActivity extends Activity {
 
     private void setBars(boolean dark) {
         Window w = getWindow();
-        int c = dark ? 0xFF1A1D28 : 0xFFFFFFFF;
+        int c = dark ? 0xFF17121F : 0xFFF7F0DF;
         w.setStatusBarColor(c);
         w.setNavigationBarColor(c);
         int f = 0;
