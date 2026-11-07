@@ -1,0 +1,785 @@
+<!doctype html>
+<html lang="pt-BR" data-theme="dark"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>Mapa da Cruzada</title><meta name="theme-color" content="#1A1D28"><link rel="manifest" href="manifest.webmanifest"><link rel="icon" href="icon-192.png"><link rel="apple-touch-icon" href="icon-180.png">
+<style>@font-face{font-family:"Marcellus SC";src:url(fonts/marcellus-sc-latin-400-normal.woff2) format("woff2");font-weight:400;font-display:swap}
+@font-face{font-family:"Alegreya Sans";src:url(fonts/alegreya-sans-latin-400-normal.woff2) format("woff2");font-weight:400;font-display:swap}
+@font-face{font-family:"Alegreya Sans";src:url(fonts/alegreya-sans-latin-500-normal.woff2) format("woff2");font-weight:500;font-display:swap}
+@font-face{font-family:"Alegreya Sans";src:url(fonts/alegreya-sans-latin-700-normal.woff2) format("woff2");font-weight:700;font-display:swap}
+@font-face{font-family:"Alegreya Sans";src:url(fonts/alegreya-sans-latin-400-italic.woff2) format("woff2");font-weight:400;font-style:italic;font-display:swap}
+@font-face{font-family:"IBM Plex Mono";src:url(fonts/ibm-plex-mono-latin-400-normal.woff2) format("woff2");font-weight:400;font-display:swap}
+@font-face{font-family:"IBM Plex Mono";src:url(fonts/ibm-plex-mono-latin-500-normal.woff2) format("woff2");font-weight:500;font-display:swap}
+[hidden]{display:none!important}img{max-width:100%}*{box-sizing:border-box}
+
+/* Layout: barra superior com abas; painel de estado à esquerda (desktop) e conteúdo de trabalho à direita; empilha no celular. */
+:root{
+  --bg:#ECEEF2; --surface:#FFFFFF; --sunk:#E2E5EC; --line:#CDD2DC;
+  --fg:#1A1E29; --muted:#5A6172; --accent:#5646B8; --accent-soft:#E6E2FA;
+  --gold:#9A6B12; --ok:#2E7D4F; --warn:#A8620A; --bad:#B23A3A;
+  --display:"Marcellus SC","Trajan Pro",Georgia,serif;
+  --body:"Alegreya Sans","Segoe UI",system-ui,sans-serif;
+  --mono:"IBM Plex Mono",ui-monospace,Consolas,monospace;
+  --p-angel:#B8901C; --p-demon:#B5322F; --p-aeon:#2F67B3; --p-azata:#C2408A; --p-trickster:#C46A12;
+  --p-lich:#4F7F3A; --p-dragon:#C99A1E; --p-swarm:#6C6E1F; --p-devil:#8E1F33; --p-legend:#5E6676; --p-secret:#6A4BB8;
+}
+@media (prefers-color-scheme: dark){:root:not([data-theme="light"]){
+  --bg:#11131B; --surface:#1A1D28; --sunk:#222634; --line:#2F3445;
+  --fg:#E7E8EE; --muted:#9AA0B2; --accent:#A193FF; --accent-soft:#2A2545;
+  --gold:#E2B45B; --ok:#5CC48A; --warn:#E8A04A; --bad:#EE7A7A;
+  --p-angel:#E6C25A; --p-demon:#F06A62; --p-aeon:#6EA4F0; --p-azata:#F07ABD; --p-trickster:#F19A4A;
+  --p-lich:#8FC46F; --p-dragon:#F0C24A; --p-swarm:#B8BB4A; --p-devil:#E0566F; --p-legend:#A4ABBC; --p-secret:#A98BFF;
+  color-scheme:dark}}
+:root[data-theme="dark"]{
+  --bg:#11131B; --surface:#1A1D28; --sunk:#222634; --line:#2F3445;
+  --fg:#E7E8EE; --muted:#9AA0B2; --accent:#A193FF; --accent-soft:#2A2545;
+  --gold:#E2B45B; --ok:#5CC48A; --warn:#E8A04A; --bad:#EE7A7A;
+  --p-angel:#E6C25A; --p-demon:#F06A62; --p-aeon:#6EA4F0; --p-azata:#F07ABD; --p-trickster:#F19A4A;
+  --p-lich:#8FC46F; --p-dragon:#F0C24A; --p-swarm:#B8BB4A; --p-devil:#E0566F; --p-legend:#A4ABBC; --p-secret:#A98BFF;
+  color-scheme:dark}
+*{box-sizing:border-box}
+body{background:var(--bg);color:var(--fg);font-family:var(--body);font-size:16px;line-height:1.5;margin:0}
+
+.wrap{padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px));max-width:1240px;margin:0 auto}
+header{position:sticky;top:env(safe-area-inset-top,0px);z-index:5;background:var(--surface);border-bottom:1px solid var(--line)}
+.top{display:flex;flex-wrap:wrap;align-items:center;gap:8px 20px;padding-block:12px 0}
+h1{font-family:var(--display);font-weight:400;font-size:1.45rem;margin:0;letter-spacing:.02em}
+h1 small{display:block;font-family:var(--body);font-size:.8rem;color:var(--muted);letter-spacing:0}
+.sync{margin-left:auto;font-size:.8rem;color:var(--muted);font-family:var(--mono)}
+nav{display:flex;gap:2px;overflow-x:auto;padding-block:8px 0;scrollbar-width:none}
+nav button{font:500 .95rem var(--body);background:none;border:0;color:var(--muted);padding:8px 12px;border-bottom:2px solid transparent;cursor:pointer;white-space:nowrap}
+nav button[aria-selected="true"]{color:var(--fg);border-bottom-color:var(--accent)}
+nav button:focus-visible,button:focus-visible,select:focus-visible,input:focus-visible,textarea:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
+main{padding-block:20px 60px}
+h2{font-family:var(--display);font-weight:400;font-size:1.3rem;margin:0 0 4px;text-wrap:balance}
+h3{font-size:1.05rem;margin:0;text-wrap:balance}
+p{margin:0}
+.lede{color:var(--muted);max-width:68ch}
+.grid2{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:16px}
+.stack{display:flex;flex-direction:column;gap:16px}
+.panel{background:var(--surface);border:1px solid var(--line);border-radius:8px;padding:16px}
+.label{font-size:.72rem;letter-spacing:.09em;text-transform:uppercase;color:var(--muted);font-weight:700}
+.num{font-family:var(--mono);font-variant-numeric:tabular-nums}
+.bar{height:6px;background:var(--sunk);border-radius:3px;overflow:hidden}
+.bar>i{display:block;height:100%;background:var(--accent)}
+.acts{display:grid;grid-template-columns:repeat(auto-fill,minmax(150px,1fr));gap:12px}
+.act-row{display:flex;flex-direction:column;gap:6px}
+.act-row .t{display:flex;justify-content:space-between;font-size:.9rem}
+/* Caminhos */
+.paths{display:grid;grid-template-columns:repeat(auto-fill,minmax(210px,1fr));gap:10px}
+.path{border:1px solid var(--line);border-radius:6px;padding:10px 12px;display:flex;flex-direction:column;gap:6px;background:var(--surface);border-left:4px solid var(--pc)}
+.path .h{display:flex;justify-content:space-between;align-items:baseline;gap:8px}
+.path .h b{font-family:var(--display);font-weight:400;font-size:1.05rem}
+.pill{font-size:.72rem;font-weight:700;padding:2px 8px;border-radius:99px;white-space:nowrap;border:1px solid currentColor}
+.pill.ok{color:var(--ok)} .pill.warn{color:var(--warn)} .pill.bad{color:var(--bad)} .pill.info{color:var(--muted)}
+.path ul{margin:0;padding:0;list-style:none;font-size:.85rem;display:flex;flex-direction:column;gap:2px}
+.path li{display:flex;gap:6px;color:var(--muted)} .path li.d{color:var(--fg)}
+.path li::before{content:"○";flex:none;font-family:var(--mono)} .path li.d::before{content:"●";color:var(--ok)}
+.path .meta{font-size:.8rem;color:var(--muted)}
+/* Roteiro */
+.filters{display:flex;flex-wrap:wrap;gap:8px;align-items:center}
+.chip{font:500 .82rem var(--body);border:1px solid var(--line);background:var(--surface);color:var(--fg);border-radius:99px;padding:4px 10px;cursor:pointer}
+.chip[aria-pressed="true"]{background:var(--accent-soft);border-color:var(--accent);color:var(--fg)}
+.chip .dot{display:inline-block;width:8px;height:8px;border-radius:50%;background:var(--pc,var(--muted));margin-right:5px;vertical-align:1px}
+details.act{background:var(--surface);border:1px solid var(--line);border-radius:8px}
+details.act>summary{list-style:none;cursor:pointer;padding:14px 16px;display:flex;align-items:center;gap:12px;flex-wrap:wrap}
+details.act>summary::-webkit-details-marker{display:none}
+details.act>summary h3{font-family:var(--display);font-weight:400;font-size:1.15rem}
+details.act>summary .sp{margin-left:auto;display:flex;gap:10px;align-items:center;color:var(--muted);font-size:.85rem}
+details.act>summary .chev{transition:transform .15s}
+details.act[open]>summary .chev{transform:rotate(90deg)}
+.steps{border-top:1px solid var(--line)}
+.step{display:grid;grid-template-columns:28px minmax(0,1fr);gap:10px;padding:12px 16px;border-bottom:1px solid var(--line)}
+.step:last-child{border-bottom:0}
+.step.done .st-title{color:var(--muted);text-decoration:line-through;text-decoration-color:var(--line)}
+.step.kind-save{background:var(--accent-soft)}
+.step input[type=checkbox]{width:20px;height:20px;margin:2px 0 0;accent-color:var(--accent);cursor:pointer}
+.st-head{display:flex;flex-wrap:wrap;gap:6px 8px;align-items:baseline}
+.st-title{font-weight:700}
+.st-body{color:var(--muted);font-size:.92rem;margin-top:3px;max-width:78ch}
+.st-body b{color:var(--fg);font-weight:500}
+.tags{display:flex;flex-wrap:wrap;gap:4px;margin-top:6px}
+.tag{font-size:.72rem;padding:1px 7px;border-radius:4px;background:var(--sunk);color:var(--fg);display:inline-flex;align-items:center;gap:4px}
+.tag .dot{width:7px;height:7px;border-radius:50%;background:var(--pc)}
+.kind{font-size:.68rem;letter-spacing:.08em;text-transform:uppercase;font-weight:700;padding:1px 6px;border-radius:3px}
+.kind.missable{color:var(--bad);border:1px solid var(--bad)}
+.kind.choice{color:var(--warn);border:1px solid var(--warn)}
+.kind.save{color:var(--accent);border:1px solid var(--accent)}
+.kind.verify{color:var(--muted);border:1px dashed var(--muted)}
+.note-btn{font:.78rem var(--body);background:none;border:0;color:var(--accent);cursor:pointer;padding:0;margin-top:6px}
+textarea{width:100%;font:.9rem var(--body);background:var(--bg);color:var(--fg);border:1px solid var(--line);border-radius:6px;padding:8px;margin-top:6px;resize:vertical;min-height:56px}
+.next{display:flex;flex-direction:column;gap:8px}
+.next .n{display:grid;grid-template-columns:auto minmax(0,1fr);gap:10px;align-items:start;font-size:.92rem}
+.next .n .a{font-family:var(--mono);font-size:.75rem;color:var(--muted);padding-top:2px}
+/* Árvore */
+.tree{overflow-x:auto}
+.tree svg{display:block;min-width:760px}
+.branches{display:grid;grid-template-columns:repeat(auto-fill,minmax(270px,1fr));gap:12px}
+.branch{border:1px solid var(--line);border-left:4px solid var(--pc);border-radius:6px;padding:12px;background:var(--surface);display:flex;flex-direction:column;gap:8px}
+.branch label{display:flex;gap:8px;align-items:flex-start;font-size:.9rem;cursor:pointer}
+.branch input{accent-color:var(--accent);margin-top:4px}
+.branch .warnline{font-size:.82rem;color:var(--warn)}
+code.sv{font-family:var(--mono);font-size:.8rem;background:var(--sunk);padding:1px 5px;border-radius:3px}
+/* Companheiros */
+.comps{display:grid;grid-template-columns:repeat(auto-fill,minmax(280px,1fr));gap:12px}
+.comp{border:1px solid var(--line);border-radius:6px;padding:12px;background:var(--surface);display:flex;flex-direction:column;gap:6px}
+.comp .h{display:flex;justify-content:space-between;gap:8px;align-items:center}
+.comp .h b{font-family:var(--display);font-weight:400;font-size:1.1rem}
+.comp .cls{font-size:.82rem;color:var(--muted)}
+.comp dl{margin:0;display:grid;grid-template-columns:auto minmax(0,1fr);gap:2px 10px;font-size:.85rem}
+.comp dt{color:var(--muted)} .comp dd{margin:0}
+select{font:.85rem var(--body);background:var(--bg);color:var(--fg);border:1px solid var(--line);border-radius:5px;padding:4px 6px}
+.st-0{color:var(--muted)} .st-1{color:var(--accent)} .st-2{color:var(--ok)} .st-3{color:var(--bad)}
+.comp details.cq{border-top:1px solid var(--line);margin-top:4px;padding-top:6px}
+.comp details.cq>summary{cursor:pointer;display:flex;justify-content:space-between;font-size:.85rem;font-weight:700;color:var(--accent);padding:4px 0}
+.cqs{display:grid;grid-template-columns:22px minmax(0,1fr);gap:8px;padding:8px 0;border-bottom:1px dashed var(--line);font-size:.86rem}
+.cqs:last-child{border-bottom:0}
+.cqs input{accent-color:var(--accent);margin-top:3px;width:16px;height:16px}
+.cqs p{color:var(--muted);margin-top:2px}
+.cqs.done b{text-decoration:line-through;color:var(--muted)}
+.cqa{font-size:.72rem;color:var(--gold)}
+tr.lvdone td{color:var(--muted)}
+.ftl{display:flex;gap:6px;align-items:center;font-size:.88rem;cursor:pointer}
+.ftl input{accent-color:var(--accent)}
+/* Equipe */
+.party{display:grid;grid-template-columns:repeat(auto-fill,minmax(260px,1fr));gap:12px}
+.slot{border:1px solid var(--line);border-radius:6px;padding:12px;background:var(--surface);display:flex;flex-direction:column;gap:6px}
+.slot .role{font-size:.72rem;letter-spacing:.09em;text-transform:uppercase;color:var(--gold);font-weight:700}
+.slot b{font-family:var(--display);font-weight:400;font-size:1.15rem}
+.slot p{font-size:.9rem;color:var(--muted)}
+table{border-collapse:collapse;width:100%;font-size:.88rem}
+.tbl{overflow-x:auto}
+th,td{text-align:left;padding:8px 10px;border-bottom:1px solid var(--line);vertical-align:top}
+th{font-size:.72rem;letter-spacing:.08em;text-transform:uppercase;color:var(--muted)}
+ul.tips{margin:0;padding-left:18px;display:flex;flex-direction:column;gap:6px;font-size:.92rem;max-width:80ch}
+.btn{font:500 .9rem var(--body);background:var(--accent);color:var(--surface);border:0;border-radius:6px;padding:8px 14px;cursor:pointer}
+.btn.ghost{background:none;color:var(--fg);border:1px solid var(--line)}
+.btn.danger{background:none;color:var(--bad);border:1px solid var(--bad)}
+.row{display:flex;flex-wrap:wrap;gap:8px;align-items:center}
+.callout{border:1px solid var(--line);border-left:4px solid var(--gold);border-radius:6px;padding:12px 14px;background:var(--surface);font-size:.93rem;max-width:90ch}
+.callout b{font-weight:700}
+[role=tabpanel]{display:flex;flex-direction:column;gap:20px}
+@media (max-width:820px){.grid2{grid-template-columns:minmax(0,1fr)}}
+@media (prefers-reduced-motion:reduce){*{transition:none!important}}
+
+/* Android: barra superior fixa, navegação inferior estilo Material, alvos de toque de 48px */
+:root{--body:Roboto,"Google Sans","Noto Sans",system-ui,sans-serif;--navh:72px}
+html{-webkit-tap-highlight-color:transparent}
+body{font-size:15.5px;padding-bottom:calc(var(--navh) + env(safe-area-inset-bottom,0px))}
+.appbar{position:sticky;top:0;z-index:20;background:var(--surface);border-bottom:1px solid var(--line);padding:calc(env(safe-area-inset-top,0px) + 10px) max(16px,env(safe-area-inset-right,0px)) 10px max(16px,env(safe-area-inset-left,0px));display:flex;align-items:center;gap:12px;min-height:56px}
+.appbar img{width:32px;height:32px;border-radius:8px}
+.appbar h1{font-family:var(--display);font-weight:400;font-size:1.25rem;margin:0;flex:1;min-width:0;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.appbar #sync{font:.7rem var(--mono);color:var(--muted)}
+main.an{padding:16px max(16px,env(safe-area-inset-right,0px)) 24px max(16px,env(safe-area-inset-left,0px))}
+nav.bottom{position:fixed;left:0;right:0;bottom:0;z-index:30;background:var(--surface);border-top:1px solid var(--line);display:grid;grid-template-columns:repeat(5,1fr);padding:6px max(4px,env(safe-area-inset-right,0px)) calc(6px + env(safe-area-inset-bottom,0px)) max(4px,env(safe-area-inset-left,0px))}
+nav.bottom button{background:none;border:0;display:flex;flex-direction:column;align-items:center;gap:4px;font:500 .72rem var(--body);color:var(--muted);min-height:56px;padding:0;cursor:pointer}
+nav.bottom .pill-i{display:grid;place-items:center;width:60px;height:32px;border-radius:16px;transition:background .15s}
+nav.bottom button[aria-selected="true"]{color:var(--fg)}
+nav.bottom button[aria-selected="true"] .pill-i{background:var(--accent-soft)}
+.ico{width:24px;height:24px;fill:none;stroke:currentColor;stroke-width:2;stroke-linecap:round;stroke-linejoin:round}
+.scrim{position:fixed;inset:0;background:rgba(0,0,0,.45);z-index:40}
+.sheet{position:fixed;left:0;right:0;bottom:0;z-index:41;background:var(--surface);border-radius:20px 20px 0 0;padding:8px max(16px,env(safe-area-inset-right,0px)) calc(16px + env(safe-area-inset-bottom,0px)) max(16px,env(safe-area-inset-left,0px));display:flex;flex-direction:column}
+.sheet .grab{width:36px;height:4px;border-radius:2px;background:var(--line);margin:4px auto 12px}
+.sheet button{display:flex;align-items:center;gap:16px;min-height:56px;background:none;border:0;font:500 1rem var(--body);color:var(--fg);border-radius:12px;padding:0 12px;text-align:left}
+.sheet button[aria-selected="true"]{background:var(--accent-soft)}
+/* toque */
+.step{grid-template-columns:32px minmax(0,1fr);padding:14px 14px}
+.step input[type=checkbox],.cqs input,.branch input,.ftl input{width:24px;height:24px;min-width:24px}
+.cqs{grid-template-columns:30px minmax(0,1fr)}
+.chip{min-height:36px;padding:6px 14px;font-size:.9rem}
+.filters{flex-wrap:nowrap;overflow-x:auto;padding-bottom:4px;margin-inline:-16px;padding-inline:16px;scrollbar-width:none}
+.filters::-webkit-scrollbar{display:none}
+.chip{flex:none}
+select,.btn{min-height:44px;font-size:.95rem}
+textarea{font-size:1rem}
+details.act>summary{min-height:56px}
+.comps,.party,.branches,.paths{grid-template-columns:minmax(0,1fr)}
+.note-btn{min-height:36px}
+.branch label,.ftl{min-height:40px;align-items:center}
+@media (min-width:700px){.comps,.party,.branches,.paths{grid-template-columns:repeat(2,minmax(0,1fr))}}
+</style></head>
+<body>
+<header class="appbar"><img src="icon-192.png" alt=""><h1 id="pagetitle">Painel</h1><span id="sync">…</span></header>
+<main class="an">
+<section role="tabpanel" id="painel"></section>
+<section role="tabpanel" id="roteiro" hidden></section>
+<section role="tabpanel" id="saves" hidden></section>
+<section role="tabpanel" id="aliados" hidden></section>
+<section role="tabpanel" id="romances" hidden></section>
+<section role="tabpanel" id="ascensao" hidden></section>
+<section role="tabpanel" id="equipe" hidden></section>
+<section role="tabpanel" id="dados" hidden></section>
+</main>
+<nav class="bottom" role="tablist" id="tabs"><button role="tab" data-tab="painel" aria-selected="true"><span class="pill-i"><svg class="ico" viewBox="0 0 24 24" aria-hidden="true"><rect x="3" y="3" width="7" height="7" rx="1.5"/><rect x="14" y="3" width="7" height="7" rx="1.5"/><rect x="3" y="14" width="7" height="7" rx="1.5"/><rect x="14" y="14" width="7" height="7" rx="1.5"/></svg></span>Painel</button><button role="tab" data-tab="roteiro" aria-selected="false"><span class="pill-i"><svg class="ico" viewBox="0 0 24 24" aria-hidden="true"><path d="M9 4 3 6v14l6-2 6 2 6-2V4l-6 2-6-2z"/><path d="M9 4v14M15 6v14"/></svg></span>Roteiro</button><button role="tab" data-tab="saves" aria-selected="false"><span class="pill-i"><svg class="ico" viewBox="0 0 24 24" aria-hidden="true"><circle cx="6" cy="5" r="2.5"/><circle cx="6" cy="19" r="2.5"/><circle cx="18" cy="7" r="2.5"/><path d="M6 7.5v9M18 9.5c0 5-6 4.5-11 7.5"/></svg></span>Saves</button><button role="tab" data-tab="aliados" aria-selected="false"><span class="pill-i"><svg class="ico" viewBox="0 0 24 24" aria-hidden="true"><circle cx="9" cy="8" r="3.5"/><path d="M2.5 20c.5-3.6 3.2-5.5 6.5-5.5s6 1.9 6.5 5.5"/><path d="M16 4.5a3.5 3.5 0 0 1 0 7M18.5 14.8c1.8.8 2.8 2.6 3 5.2"/></svg></span>Aliados</button><button id="morebtn" aria-haspopup="dialog" aria-label="Mais seções"><span class="pill-i"><svg class="ico" viewBox="0 0 24 24" aria-hidden="true"><circle cx="5" cy="12" r="1.6"/><circle cx="12" cy="12" r="1.6"/><circle cx="19" cy="12" r="1.6"/></svg></span>Mais</button></nav>
+<div class="scrim" id="scrim" hidden></div>
+<div class="sheet" id="sheet" role="dialog" aria-label="Mais seções" hidden><div class="grab"></div><button role="tab" data-tab="romances" aria-selected="false"><svg class="ico" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 20s-7.5-4.6-8.8-9.4C2.3 7.2 4.4 4.5 7.3 4.5c1.9 0 3.4 1.1 4.7 2.9 1.3-1.8 2.8-2.9 4.7-2.9 2.9 0 5 2.7 4.1 6.1C19.5 15.4 12 20 12 20z"/></svg>Romances</button><button role="tab" data-tab="ascensao" aria-selected="false"><svg class="ico" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 2.8l1.9 6.3 6.3 1.9-6.3 1.9L12 19.2l-1.9-6.3L3.8 11l6.3-1.9z"/><path d="M19 17l.7 2.3L22 20l-2.3.7L19 23l-.7-2.3L16 20l2.3-.7z"/></svg>Ascensão</button><button role="tab" data-tab="equipe" aria-selected="false"><svg class="ico" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 21.5s7.5-3.6 7.5-9.5V5.5L12 2.5l-7.5 3V12c0 5.9 7.5 9.5 7.5 9.5z"/><path d="M12 7v9M9 10h6"/></svg>Equipe</button><button role="tab" data-tab="dados" aria-selected="false"><svg class="ico" viewBox="0 0 24 24" aria-hidden="true"><path d="M20.5 15v3.5a2 2 0 0 1-2 2h-13a2 2 0 0 1-2-2V15"/><path d="M7.5 10.5 12 15l4.5-4.5M12 15V3.5"/></svg>Backup e ajustes</button></div>
+<script>
+const DEFAULT_THEME="dark";
+const MORE_TABS=["romances", "ascensao", "equipe", "dados"];
+function closeSheet(){const s=document.getElementById("sheet"),c=document.getElementById("scrim");if(s){s.hidden=true;c.hidden=true}}
+function platformInit(){
+  const titles={"painel": "Painel", "roteiro": "Roteiro", "saves": "Saves", "aliados": "Aliados", "romances": "Romances", "ascensao": "Ascensão", "equipe": "Equipe", "dados": "Backup e ajustes"};
+  const upd=()=>{document.getElementById("pagetitle").textContent=titles[CUR]||"";const mb=document.getElementById("morebtn");mb.setAttribute("aria-selected",MORE_TABS.includes(CUR)?"true":"false")};
+  const _st=showTab; showTab=function(t){_st(t);upd()}; upd();
+  document.getElementById("morebtn").addEventListener("click",()=>{const s=document.getElementById("sheet");const open=s.hidden;s.hidden=!open;document.getElementById("scrim").hidden=!open});
+  document.getElementById("scrim").addEventListener("click",closeSheet);
+}
+window.appBack=function(){const s=document.getElementById("sheet");if(s&&!s.hidden){closeSheet();return true}if(CUR!=="painel"){showTab("painel");return true}return false};
+if("serviceWorker" in navigator&&/^https?:/.test(location.protocol)){addEventListener("load",()=>navigator.serviceWorker.register("sw.js").catch(()=>{}))}
+
+/* ===================== DADOS ===================== */
+const PATHS = {
+  angel:{n:"Anjo",c:"--p-angel",al:"LB"}, demon:{n:"Demônio",c:"--p-demon",al:"CM"},
+  aeon:{n:"Aeon",c:"--p-aeon",al:"LN"}, azata:{n:"Azata",c:"--p-azata",al:"CB"},
+  trickster:{n:"Trickster",c:"--p-trickster",al:"CN"}, lich:{n:"Lich",c:"--p-lich",al:"LM/NM"},
+  dragon:{n:"Dragão Dourado",c:"--p-dragon",al:"NB"}, swarm:{n:"Enxame",c:"--p-swarm",al:"NM"},
+  devil:{n:"Diabo",c:"--p-devil",al:"LM"}, legend:{n:"Lenda",c:"--p-legend",al:"N"},
+  secret:{n:"Final secreto",c:"--p-secret",al:"—"}
+};
+const ACTS = [
+  {id:"pro",n:"Prólogo",s:"Cavernas sob Kenabres"},
+  {id:"a1",n:"Ato 1",s:"Kenabres em chamas"},
+  {id:"a2",n:"Ato 2",s:"Comandante da Cruzada até Drezen"},
+  {id:"a3",n:"Ato 3",s:"Drezen e a Worldwound (já no ramo)"},
+  {id:"a4",n:"Ato 4",s:"Ilhas da Meia-Noite"},
+  {id:"a5",n:"Ato 5",s:"Retorno a Drezen · MR8 e MR9"},
+  {id:"a6",n:"Ato 6",s:"Threshold e finais"}
+];
+/* kind: step | missable | choice | save | verify */
+const STEPS = [
+ // PRÓLOGO
+ {id:"p0",a:"pro",k:"verify",t:"Cena de Deskari: atacar com a besta",d:"Na abertura, quando Terendelev enfrenta Deskari, ataque com a <b>besta</b> em vez de lançar a magia. Citado como requisito do final secreto.",p:["secret"]},
+ {id:"p1",a:"pro",k:"missable",t:"Pegar as escamas de Terendelev",d:"Na caverna inicial há <b>duas escamas de Terendelev</b>. Pegue as duas e <b>nunca venda</b>. São a primeira peça do Dragão Dourado.",p:["dragon"]},
+ {id:"p2",a:"pro",k:"step",t:"Encontrar a espada do anjo caído",d:"Logo após conhecer Lann e Wenduag. Abre o caminho do Anjo automaticamente.",p:["angel"]},
+ {id:"p3",a:"pro",k:"choice",t:"Lann ou Wenduag: fique do lado de Lann",d:"Para ter os dois no fim do jogo, apoie Lann no conflito do prólogo. Wenduag sai agora e volta mais tarde, se for poupada no duelo do Ato 3.",p:[],c:["Lann","Wenduag"]},
+ {id:"p4",a:"pro",k:"step",t:"Labirinto do Escudo: cena de Hosilla",d:"A cena com Hosilla e o demônio no fim do Shield Maze abre o caminho do Demônio automaticamente.",p:["demon"]},
+ {id:"p5",a:"pro",k:"step",t:"Seelah e Camellia no grupo",d:"Entram automaticamente no prólogo.",p:[],c:["Seelah","Camellia"]},
+ // ATO 1
+ {id:"a1a",a:"a1",k:"missable",t:"Aeon e segredo: adaga roxa no local onde Terendelev caiu",d:"Na <b>Market Square</b>, ponto de poder perto de onde a dragoa morreu. Escolha a opção Aeon e aceite a <b>adaga roxa</b>. Nunca a descarte: ela é um Cristal Nahyndriano, peça do final secreto e da recruta de Ulbrig. Vale para as duas linhas.",p:["aeon","secret"]},
+ {id:"a1b",a:"a1",k:"step",t:"Azata 1/5: deixar Ramien ir",d:"Resolva o impasse entre Hulrun e o sacerdote de Desna Ramien de forma que Ramien saia livre. O jeito mais fácil é mostrar a luz da espada a Hulrun.",p:["azata"]},
+ {id:"a1c",a:"a1",k:"step",t:"Azata 2/5: achar Ramien invisível",d:"No templo de Desna em ruínas. Precisa de Percepção alta ou <b>See Invisibility</b>. Aceite a missão <b>Starward Gaze</b>.",p:["azata"]},
+ {id:"a1d",a:"a1",k:"step",t:"Azata 3/5: Aranka",d:"Na <b>Arendae Party House</b> (mesma área de Daeran). Ela entrega um xale.",p:["azata"]},
+ {id:"a1e",a:"a1",k:"step",t:"Azata 4/5: Thall disfarçado",d:"Um falso cruzado com pena grande no elmo, perto da entrada da Market Square. Quando Hulrun aparecer, garanta que <b>Thall fuja</b>.",p:["azata"]},
+ {id:"a1f",a:"a1",k:"missable",t:"Azata 5/5: cantar com os adeptos",d:"Volte ao templo de Desna, aceite a canção e escolha <b>cantar junto</b>. A cena de livro confirma o Azata. Esta canção também é a base da Arueshalae antecipada.",p:["azata"],c:["Arueshalae"]},
+ {id:"a1g",a:"a1",k:"step",t:"Ember: defendê-la na Market Square",d:"Ela está sendo atacada por cruzados. Derrote-os e recrute.",p:[],c:["Ember"]},
+ {id:"a1h",a:"a1",k:"step",t:"Daeran: Arendae Party House",d:"Limpe os demônios da casa e fale com Daeran.",p:[],c:["Daeran"]},
+ {id:"a1i",a:"a1",k:"step",t:"Nenio: encontro na viagem",d:"Encontro garantido ao viajar (geralmente voltando da Market Square para o Defender's Heart). Participe dos experimentos e derrote os cultistas.",p:[],c:["Nenio"]},
+ {id:"a1j",a:"a1",k:"step",t:"Woljif: porão do Defender's Heart",d:"Entra durante a soltura dele. Já traz a missão pessoal <b>Stolen Moon</b>.",p:[],c:["Woljif"]},
+ {id:"a1k",a:"a1",k:"step",t:"Finnean: loja Ancientries and Wonders",d:"Durante ou após <b>Stolen Moon</b>, examine a mesa da loja. A arma falante tem missão própria.",p:[],c:["Finnean"]},
+ {id:"a1l",a:"a1",k:"missable",t:"Lich 1/3: custódio da Tower of Estrod",d:"Converse com o custódio sobre o cruzado e seu mentor <b>Zacharius</b>. Sem essa conversa a cadeia do Lich não avança.",p:["lich"]},
+ {id:"a1m",a:"a1",k:"missable",t:"Trickster: Blackwing Library",d:"Na cena de Chaleb queimando inocentes, escolha <b>todas</b> as opções de Trickster, inclusive a que manda Chaleb armar explosivos na Gray Garrison.",p:["trickster"]},
+ {id:"a1n",a:"a1",k:"step",t:"Resgatar o Storyteller e mostrar as escamas",d:"Mostre as escamas. Ele conta a história e pede mais partes da dragoa.",p:["dragon"]},
+ {id:"a1o0",a:"a1",k:"save",t:"Save de bifurcação: antes da Wardstone",d:"Salve <code class='sv'>A1-WARDSTONE</code> antes de tocar a Wardstone. Daqui saem a Linha A e a Linha B (veja a Árvore de saves).",p:["aeon","secret"]},
+ {id:"a1o",a:"a1",k:"choice",t:"Wardstone: Aeon ou final secreto",d:"Ao tocar a Wardstone na Gray Garrison: <b>Linha A</b> (principal) <b>não</b> escolhe a opção Aeon e mantém o final secreto possível. <b>Linha B</b> escolhe Aeon, fixa o caminho Aeon e perde o final secreto nessa linha.",p:["aeon","secret"]},
+ {id:"a1p",a:"a1",k:"step",t:"Ver Chaleb explodir",d:"A cena dos explosivos explodindo na cara dele confirma o Trickster.",p:["trickster"]},
+ {id:"a1q",a:"a1",k:"save",t:"Save de segurança: fim do Ato 1",d:"Nome sugerido <code class='sv'>A1-FIM-tudo-aberto</code>. Confira no Painel se Aeon, Azata e Trickster estão verdes.",p:[]},
+ // ATO 2
+ {id:"a2a",a:"a2",k:"choice",t:"Rainha Galfrey incógnita: recusar na Linha A",d:"<b>Linha A</b>: recuse que a rainha venha disfarçada (preserva o Enxame). <b>Linha B</b>: aceite (abre o romance com Galfrey; a Linha B não terá Enxame).",p:["swarm"]},
+ {id:"a2b",a:"a2",k:"step",t:"Sosiel: acampamento dos cruzados",d:"Já traz missão pessoal. Mantenha o escudo <b>Immaculate Petal</b> dele no inventário até o Ato 3.",p:[],c:["Sosiel"]},
+ {id:"a2c",a:"a2",k:"step",t:"Regill: missão Walking by Hell",d:"Evento no mapa do mundo, ligado ao <b>Reliable Redoubt</b>. Traz Hellknights para o exército.",p:[],c:["Regill"]},
+ {id:"a2d",a:"a2",k:"choice",t:"Leper's Smile: gosma da Rainha Vescavor",d:"Após derrotar a <b>Rainha Vescavor</b>, escolha a opção maligna de <b>coletar a gosma</b>.",p:["swarm"]},
+ {id:"a2e",a:"a2",k:"missable",t:"Lich 2/3: pegar a Wand of Zacharius",d:"Na caverna de Leper's Smile, perto da carroça dos wights há uma área de energia negativa que revive mortos. Interaja com a fonte e <b>pegue a varinha</b>. Destruí-la fecha o Lich.",p:["lich"]},
+ {id:"a2f",a:"a2",k:"step",t:"Garra de Terendelev",d:"Na mesma caverna, numa <b>carroça destruída</b> perto da varinha.",p:["dragon"]},
+ {id:"a2g",a:"a2",k:"missable",t:"Nurah aliada",d:"Depois do evento de Leper's Smile, volte a Nurah e passe <b>dois testes de Percepção</b> para conversar. Ela pode se juntar depois da Lost Chapel. Exigido pelo final secreto.",p:["secret"]},
+ {id:"a2g2",a:"a2",k:"step",t:"Não ligar o modo de cruzada automática",d:"O modo automático desativa a mesa de comando, e as pesquisas do final secreto dependem dela.",p:["secret"]},
+ {id:"a2h",a:"a2",k:"step",t:"Nenio: More Than Nothing",d:"A missão dela leva às <b>Nameless Ruins</b> neste ato.",p:[],c:["Nenio"]},
+ {id:"a2i",a:"a2",k:"missable",t:"Lich 3/3: devolver a varinha a Zacharius",d:"Na missão obrigatória <b>A Strike from the Sky</b> (Lost Chapel), a varinha revela uma porta mágica escondida. Desça às catacumbas e <b>entregue a varinha</b> ao lich.",p:["lich"]},
+ {id:"a2j",a:"a2",k:"verify",t:"Arueshalae antecipada: enigma de Desna",d:"Com a canção de Desna do Ato 1, resolva o enigma oculto na Lost Chapel <b>antes de atacar Drezen</b>. Se falhar, ela ainda entra no Ato 3.",p:[],c:["Arueshalae"]},
+ {id:"a2k",a:"a2",k:"choice",t:"Cerco de Drezen: usar a gosma",d:"Use a gosma para espalhar a praga e tomar o forte.",p:["swarm"]},
+ {id:"a2k2",a:"a2",k:"verify",t:"Libertar Yaniel",d:"Na batalha de Drezen, liberte Yaniel e siga-a até a passagem secreta; responda com opção <b>neutra ou maligna</b>. Uma das fontes coloca o resgate no Midnight Fane do Ato 3.",p:["secret"]},
+ {id:"a2l",a:"a2",k:"step",t:"Fazer o máximo de missões pessoais disponíveis",d:"Avance tudo que der de Woljif, Nenio, Sosiel, Daeran, Ember, Camellia, Seelah e Regill <b>antes</b> do save mestre. Assim cada ramo já começa adiantado.",p:[]},
+ {id:"a2m",a:"a2",k:"save",t:"SAVE MESTRE: antes de escolher o caminho em MR3",d:"Na tela de escolha do caminho mítico (rank 3, fim do Ato 2), salve em slot próprio: <code class='sv'>MESTRE-MR3-todos</code>. Todos os seis caminhos iniciais devem aparecer liberados. A partir daqui, use a Árvore de saves.",p:[]},
+ // ATO 3
+ {id:"a3a",a:"a3",k:"step",t:"Pesquisa Sword of Valor",d:"Na mesa de comando de Drezen. Necessária para o final secreto.",p:["secret"]},
+ {id:"a3b",a:"a3",k:"step",t:"Greybor e a Dragon Hunt",d:"Contrate Greybor. O Storyteller reaparece: mostre a <b>garra</b> e ouça a história. Isso abre <b>Terendelev's Lair</b> no mapa.",p:["dragon"],c:["Greybor"]},
+ {id:"a3c",a:"a3",k:"missable",t:"Terendelev's Lair: poupar o cultista",d:"Hal pede para você poupar um cultista. <b>Poupe</b> e não lute com Hal (Halaseliax). Conclui The Dragon's Fate.",p:["dragon"]},
+ {id:"a3d",a:"a3",k:"missable",t:"Demonic Parasites: não matar a larva",d:"Em Drezen aparece uma <b>Rainha Vescavor bebê</b>. Não a mate.",p:["swarm"]},
+ {id:"a3e",a:"a3",k:"step",t:"Xanthir Vang: perguntar e ler tudo",d:"Antes da luta, pergunte tudo sobre como ele virou enxame e leia as notas do covil. Isso libera o decreto <b>Xanthir's Experiments</b>. Aqui também há uma <b>Midnight Bolt</b> (Ivory Sanctum).",p:["swarm","secret"]},
+ {id:"a3f",a:"a3",k:"step",t:"Decreto e conversa com Anevia",d:"Pesquise o decreto. Quando Anevia vier falar das preocupações, <b>apoie os experimentos</b>.",p:["swarm"]},
+ {id:"a3g",a:"a3",k:"missable",t:"Só Aeon/Azata: aceitar Malies",d:"A diaba <b>Malies</b> pede para ser conselheira. Aceite e coopere com ela ao longo do jogo.",p:["devil"]},
+ {id:"a3h",a:"a3",k:"missable",t:"Laboratório de Areelu: Lexicon parte 1 e Suture",d:"Complete os objetivos, pegue a <b>parte 1 do Lexicon of Paradox</b>, aceite o poder dele e guarde-a. <b>Deixe Suture viver</b>: nunca ataque nem mate Suture. Há uma Midnight Bolt aqui.",p:["secret"]},
+ {id:"a3i",a:"a3",k:"choice",t:"Duelo com Wenduag: poupar e mandar embora",d:"<b>Poupe</b> Wenduag e mande-a embora (opção maligna ou Persuasão alta). <b>Não recrute agora</b>: ela trai e sai de vez. Ela volta mais tarde.",p:[],c:["Lann","Wenduag"]},
+ {id:"a3j",a:"a3",k:"verify",t:"Sosiel e Trever",d:"Conclua a missão de Sosiel ouvindo toda a história dos sobreviventes da Lost Chapel. Trever precisa sobreviver para virar companheiro secreto na arena.",p:[],c:["Sosiel","Trever"]},
+ {id:"a3k",a:"a3",k:"step",t:"Arueshalae em Greensight",d:"Se não veio cedo, vá a Greensight, vença a luta e recrute.",p:[],c:["Arueshalae"]},
+ {id:"a3l",a:"a3",k:"step",t:"Só Lich: companheiros mortos-vivos",d:"Staunton Vhane, Delamere e Ciar entram no ramo Lich. Seelah sai.",p:["lich"],c:["Staunton","Delamere","Ciar"]},
+ // ATO 4
+ {id:"a4a",a:"a4",k:"verify",t:"Recrutar Wenduag (forma segura)",d:"Ela reaparece depois do duelo do Ato 3. As fontes divergem entre Ato 4 e Ato 5; aceite quando ela aparecer.",p:[],c:["Wenduag"]},
+ {id:"a4b",a:"a4",k:"step",t:"Midnight Bolts do Ato 4",d:"Palácio de Nocticula (sala do projetor) e as minas.",p:["secret"]},
+ {id:"a4b2",a:"a4",k:"missable",t:"Lexicon parte 2 no Palácio de Nocticula",d:"Na pequena biblioteca à esquerda da entrada. Exige teste alto de Percepção. Guarde as duas partes.",p:["secret"]},
+ {id:"a4b3",a:"a4",k:"missable",t:"Suture no Nexus e no Fleshmarket",d:"No Nexus ele usa um cristal teleportador no fundo das cavernas. No Fleshmarket ele está capturado: pague os escravistas ou lute para libertá-lo.",p:["secret"]},
+ {id:"a4b4",a:"a4",k:"step",t:"Mage Tower: contar ao Storyteller sobre a adaga roxa",d:"Ele revela que a adaga é um Cristal Nahyndriano. No Harem of Ardent Dreams, <b>não</b> mencione a adaga a Shamira; reflita sobre a natureza dos cristais.",p:["secret"]},
+ {id:"a4b5",a:"a4",k:"missable",t:"Palácio de Nocticula: recusar o poder de Areelu",d:"Pergunte sobre Suture, faça mais perguntas em vez de aceitar o poder, passe no teste de Percepção e esgote as respostas.",p:["secret"]},
+ {id:"a4c",a:"a4",k:"choice",t:"Dádiva profana de Nocticula",d:"Aceitar obriga a passar num <b>teste difícil de Vontade</b> para escolher Lenda no MR8. No ramo principal, recuse para não arriscar a Lenda.",p:["legend"]},
+ {id:"a4d",a:"a4",k:"verify",t:"Pulura's Fall: matar Mutasafen",d:"Ataque e mate Mutasafen; não deixe o homem fugir. Libera a pesquisa Records of Pulura's Stargazers no Ato 5. Algumas fontes situam no Ato 5.",p:["secret"]},
+ {id:"a4e",a:"a4",k:"step",t:"Baphomet: atingir com Midnight Bolt",d:"No fim do ato. Gera um <b>Cristal Nahyndriano</b> fresco e a pesquisa Unusual Crystals.",p:["secret"]},
+ // ATO 5
+ {id:"a5a",a:"a5",k:"step",t:"Hal: tratar bem",d:"Pouco antes do MR8, Hal reaparece. Respostas gentis, não o ataque.",p:["dragon"]},
+ {id:"a5b",a:"a5",k:"step",t:"Devorar a Rainha Vescavor madura",d:"Na mesma casa de Drezen do Ato 3. Escolha <b>comê-la</b>.",p:["swarm"]},
+ {id:"a5c",a:"a5",k:"save",t:"SAVE MR8: antes da re-escolha",d:"Salve <code class='sv'>R1-MR8-escolha</code> antes de confirmar. Opções: manter o caminho, Lenda, Dragão Dourado, Enxame.",p:["legend","dragon","swarm"]},
+ {id:"a5d",a:"a5",k:"choice",t:"Malies oferece o caminho do Diabo",d:"Aceite e vá ao <b>Bastion of Justice</b>. O julgamento de Mefistófeles revisa suas escolhas. Passe nos testes difíceis de Diplomacia.",p:["devil"]},
+ {id:"a5e",a:"a5",k:"save",t:"SAVE antes do julgamento (MR9)",d:"<code class='sv'>R1-MR9-diabo</code>. O Diabo é o único caminho tomado no rank 9.",p:["devil"]},
+ {id:"a5f",a:"a5",k:"step",t:"As quatro pesquisas do segredo",d:"Sword of Valor (Ato 3), <b>Unusual Crystals</b> (após o cristal de um Senhor Demônio), <b>Records of Pulura's Stargazers</b> (se Mutasafen morreu) e <b>Areelu Vorlesh's Drafts</b> (podem vir dois; pesquise ambos).",p:["secret"]},
+ {id:"a5g",a:"a5",k:"missable",t:"Iz: templo primeiro",d:"Vá ao templo antes de tudo: <b>Crystal Key</b> no quarto de Anemora e a <b>Glass Key</b> num baú atrás de passagem secreta perto da escada (Percepção). Se demorar, os gafanhotos de Deskari destroem o templo. Midnight Bolt nas ruínas.",p:["secret"]},
+ {id:"a5g2",a:"a5",k:"step",t:"Capa quebrada consertada pelo Storyteller",d:"O artefato quebrado do laboratório precisa ser consertado <b>antes</b> de encontrar Areelu em Iz.",p:["secret"]},
+ {id:"a5g3",a:"a5",k:"missable",t:"Derrotar Deskari rápido",d:"Ele precisa cair na fenda em vez de fugir voando.",p:["secret"]},
+ {id:"a5g4",a:"a5",k:"step",t:"Área secreta do laboratório",d:"Volte ao laboratório de Areelu e entre no portal dourado do projeto do Lexicon. Pegue os itens e esgote os diálogos.",p:["secret"]},
+ {id:"a5g5",a:"a5",k:"verify",t:"Ineluctable Prison: fantasma de Hepzamirah",d:"Pergunte a Iomedae sobre a Hand of the Inheritor, derrote a Mão corrompida, vá à caverna escura a noroeste, passe no teste de Atletismo no caminho junto à parede e escolha as opções 2, 3 e 4 com o fantasma.",p:["secret"]},
+ {id:"a5g6",a:"a5",k:"missable",t:"Unir o Lexicon of Paradox",d:"Clique com o botão direito em uma das partes. Testes: Mundo 41, Arcana 40, Natureza 38, Religião 40, Percepção 31; uma falha encerra a tentativa. Alternativa: entregar todas as Elven Notes ao Storyteller para pular os testes. Salve antes.",p:["secret"]},
+ {id:"a5g7",a:"a5",k:"missable",t:"Janela de tempo: Gozran 16 a 21",d:"Entre no Threshold entre os dias 16 e 21 de Gozran (calendário no canto do mapa). Depois disso o final secreto trava; se estiver adiantado, passe dias.",p:["secret"]},
+ {id:"a5h",a:"a5",k:"step",t:"Fechar missões pessoais",d:"Última janela confortável para encerrar missões e romances antes do Threshold.",p:[]},
+ // ATO 6
+ {id:"a6a",a:"a6",k:"save",t:"Save antes de entrar no Threshold",d:"<code class='sv'>[ramo]-THRESHOLD</code>. Daqui saem as variações de final do ramo.",p:[]},
+ {id:"a6b",a:"a6",k:"missable",t:"Convencer Areelu",d:"Fale com Areelu sobre alcançar a divindade. É preciso acertar <b>5 de 7</b> argumentos, que mudam conforme o caminho, com vários testes perto de 40.",p:["secret"]},
+];
+/* Requisitos por caminho (ids de passos) */
+const REQ = {
+  angel:{at:"MR3",steps:["p2"],note:"Sempre liberado."},
+  demon:{at:"MR3",steps:["p4"],note:"Sempre liberado. Arueshalae não corrompida sai."},
+  aeon:{at:"MR3",steps:["a1a","a1o"],note:"Só na Linha B (escolher Aeon na Wardstone). Camellia sai. Também dá acesso ao Diabo."},
+  azata:{at:"MR3",steps:["a1b","a1c","a1d","a1e","a1f"],note:"Ganha Aivu. Ramo de acesso ao Diabo."},
+  trickster:{at:"MR3",steps:["a1m","a1p"],note:"Sem perdas de aliados."},
+  lich:{at:"MR3",steps:["a1l","a2e","a2i"],note:"Seelah sai. Ganha Staunton, Delamere e Ciar."},
+  dragon:{at:"MR8",steps:["p1","a1n","a2f","a3b","a3c","a5a"],note:"Pode vir de qualquer caminho, inclusive malignos."},
+  swarm:{at:"MR8",steps:["a2a","a2d","a2k","a3d","a3e","a3f","a5b"],note:"Todos os aliados, mercenários e conselheiros saem."},
+  devil:{at:"MR9",steps:["a3g","a5d"],note:"Exige ramo Aeon ou Azata."},
+  legend:{at:"MR8",steps:[],note:"Sempre disponível no MR8 (teste de Vontade se aceitou a dádiva de Nocticula)."},
+  secret:{at:"Ato 6",steps:["a1a","a2g","a3a","a3h","a4b2","a4b5","a4e","a5f","a5g","a5g6","a5g7","a6b"],note:"Só na Linha A (sem Aeon na Wardstone). Não funciona em Lenda e Enxame."}
+};
+/* Ramos a partir do save mestre */
+const BRANCHES = [
+  {id:"R1",ln:"A",p:"azata",t:"Ramo principal: Azata",d:"Faça aqui as etapas do Dragão Dourado e do Enxame do Ato 3, aceite Malies e cumpra o checklist da Ascensão. No MR8 este ramo vira quatro finais e no MR9, cinco.",sub:[
+    ["R1-fim-azata","Azata até o fim com o final secreto"],
+    ["R1-dragon","Do save MR8 → Dragão Dourado"],
+    ["R1-swarm","Do save MR8 → Enxame (perde todos os aliados)"],
+    ["R1-legend","Do save MR8 → Lenda"],
+    ["R1-devil","Do save MR9 → Diabo"]]},
+  {id:"R2",ln:"A",p:"angel",t:"Anjo",d:"Ramo limpo para o grupo bom completo.",sub:[["R2-fim","Anjo até o fim"]]},
+  {id:"R3",ln:"A",p:"demon",t:"Demônio",d:"Corrompa Arueshalae se quiser mantê-la.",sub:[["R3-fim","Demônio até o fim"]]},
+  {id:"R5",ln:"A",p:"trickster",t:"Trickster",d:"Ramo mais tranquilo para os aliados.",sub:[["R5-fim","Trickster até o fim"]]},
+  {id:"R6",ln:"A",p:"lich",t:"Lich",d:"Seu ramo já conhecido, agora com aliados mortos-vivos e o final secreto possível. No Ato 5 a transformação quebra qualquer romance.",sub:[["R6-fim","Lich até o fim"]]},
+  {id:"R4",ln:"B",p:"aeon",t:"Aeon (Linha B)",d:"Sai do Save Mestre B. Camellia sai. Romance com Galfrey possível. Também abre o Diabo pela rota Aeon.",sub:[["R4-fim","Aeon até o fim"]]},
+  {id:"R7",ln:"B",p:"angel",t:"Anjo com Galfrey (Linha B, opcional)",d:"Sai do Save Mestre B. Repete o Anjo, agora com a rainha na cruzada e o romance com ela.",sub:[["R7-fim","Anjo + romance com Galfrey"]]}
+];
+const COMPS = [
+ {n:"Seelah",cls:"Paladina · humana",j:"Prólogo, automático",l:"Sai no Lich e no Enxame",qs:[
+  {a:"Ato 1",k:"step",t:"A Friend in Need is a Friend Indeed",d:"Na Market Square, fale com o gnomo Kerl na ponte. Depois volte ao Defender's Heart para o reencontro."},
+  {a:"Ato 1",k:"step",t:"The League of the Inspiring Cart",d:"Aceite ajudar os amigos dela, persiga o demônio e espere Kerl roubar o anel."},
+  {a:"?",k:"verify",t:"Till Death do Us Part",d:"Etapa intermediária. Confirme o ato no diário."},
+  {a:"Ato 5",k:"choice",t:"The Weight of My Sword",d:"Define o final dela. Tranquilizar e reafirmar os ideais = final Bom (recomendado). Caminho de paladina tradicional = Leal. Criticar os ideais = Mau."}]},
+ {n:"Camellia",cls:"Shaman Spirit Hunter · meio-elfa",j:"Prólogo, automático",l:"Sai no avanço do Aeon, no Enxame ou se você não tolerar a natureza dela",qs:[
+  {a:"Ato 3",k:"choice",t:"A Noble Intent",d:"Anevia pede ajuda numa rua de Drezen; Camellia está num porão. Opções: poupar, deixá-la beber o sangue ou matá-la. Para manter Camellia, <b>não a ataque</b> e não a entregue."},
+  {a:"Ato 4",k:"step",t:"What Is Your Heart's Desire",d:"O ritual dela. Romance (Comandante homem) exige aceitar a oferta depois do ritual."},
+  {a:"Ato 5",k:"missable",t:"The Final Drop",d:"Escolha final. Se você <b>não tolerar</b> a natureza dela, ela sai de vez. Salve antes."}]},
+ {n:"Lann",cls:"Monge Zen Archer · mongrel",j:"Prólogo (apoie Lann)",l:"Sai no Enxame",qs:[
+  {a:"Ato 3",k:"choice",t:"Back to Roots: duelo com Wenduag",d:"Derrote Wenduag, <b>poupe</b> e mande-a embora (opção maligna ou Persuasão alta). Não recrute agora: ela trai."},
+  {a:"Ato 4",k:"step",t:"A Conversation With Lann",d:"Ele conta que Savamelekh está em Alushinyrra e quer rastreá-lo."},
+  {a:"?",k:"verify",t:"Bad Blood",d:"Etapa intermediária. Confirme o ato no diário."},
+  {a:"Ato 5",k:"step",t:"Seeking Forgiveness",d:"Ajude Lann a se reconciliar com a mãe."},
+  {a:"Ato 5",k:"missable",t:"The Last Resort",d:"Deixe Lann liderar contra Savamelekh e <b>mantenha-o vivo</b>. Recompensa: traço Poison Eater (+2 For e Con, +4 contra veneno)."}]},
+ {n:"Wenduag",cls:"Guerreira · mongrel",j:"Volta mais tarde, depois de mandada embora no Ato 3",l:"Se recrutada no duelo do Ato 3, trai e sai",qs:[
+  {a:"Ato 3",k:"missable",t:"Poupar no duelo e mandar embora",d:"É a mesma cena de Back to Roots. Poupar é obrigatório para ela voltar."},
+  {a:"Ato 4–5",k:"verify",t:"Reencontro e recrutamento",d:"As fontes divergem entre Ato 4 e Ato 5. Aceite quando ela aparecer."}]},
+ {n:"Ember",cls:"Bruxa Stigmatized · elfa",j:"Ato 1, Market Square",l:"Sai no Enxame",qs:[
+  {a:"Ato 3",k:"step",t:"The Wayward",d:"De volta a Drezen, ela prega para o povo. Apoie Ember."},
+  {a:"Ato 4",k:"step",t:"The Wicked",d:"Continue com respostas consistentes: misericordiosas (Boa) ou firmes (Leal)."},
+  {a:"Ato 5",k:"choice",t:"The Blessed",d:"Final dela. Caminho Bom: bônus permanente <b>Redeemer's Grace</b> (+2 Car). Caminho Leal: magia de 9º nível <b>Storm of Burning Righteousness</b>. Respostas cruéis quebram a mente dela (−2 Int)."}]},
+ {n:"Daeran",cls:"Oráculo · aasimar",j:"Ato 1, Arendae Party House",l:"Pode ser preso ou morrer no Ato 5 com Confiança baixa; sai no Enxame",qs:[
+  {a:"Ato 2",k:"choice",t:"While the World Burns: a festa de aniversário",d:"Pegue o convite, <b>distraia</b> Daeran na conversa, não o maltrate nem o obrigue a trabalhar. Respostas de apoio dão Confiança."},
+  {a:"Atos 3–4",k:"missable",t:"Gatilhos de afeto (pelo menos 2 de 5)",d:"Achar o bilhete escondido na mansão dele; reagir de forma protetora após o sonho com o Outro; demonstrar preocupação nas missões Battlebliss e Chivarro."},
+  {a:"Ato 4",k:"step",t:"Encontro no Abismo",d:"Comente o comportamento estranho dele e diga que se importa."},
+  {a:"Ato 5",k:"missable",t:"One Final Breath",d:"Com Confiança 25 ou mais, o inquisidor Liotr o deixa livre. Com Confiança baixa ele pode ser preso ou morrer. Salve antes."}]},
+ {n:"Nenio",cls:"Maga Scroll Savant · kitsune",j:"Ato 1, encontro na viagem",l:"Sai no Enxame",qs:[
+  {a:"Ato 2",k:"step",t:"More Than Nothing",d:"Enigmas na caverna das Nameless Ruins. O enigma das estátuas <b>não abre na primeira visita</b>: saia e volte depois."},
+  {a:"Ato 4",k:"verify",t:"Pedido de cerveja em Drezen",d:"Ela pede uma garrafa de cerveja em vidro. O vinho da taverna não serve."}]},
+ {n:"Woljif",cls:"Eldritch Scoundrel · tiefling",j:"Ato 1, porão do Defender's Heart",l:"Pode sumir temporariamente no Ato 3; sai no Enxame",qs:[
+  {a:"Ato 1",k:"step",t:"Stolen Moon",d:"Limpe o nome dele; durante a missão aparece Finnean na Ancientries and Wonders."},
+  {a:"Ato 3",k:"missable",t:"Crescent of the Abyss",d:"Ele pode sair do grupo por um tempo. Procure-o nesta missão para trazê-lo de volta."},
+  {a:"Ato 4",k:"step",t:"A Conversation with Woljif",d:"Conversa pessoal em Alushinyrra."},
+  {a:"?",k:"verify",t:"Dark Moon Rising",d:"Continuação da história dele. Confirme o ato no diário."}]},
+ {n:"Finnean",cls:"Arma falante",j:"Ato 1, Ancientries and Wonders",l:"—",qs:[
+  {a:"Ato 3",k:"step",t:"Finnean's Awakening",d:"Desperta novas formas da arma."}]},
+ {n:"Sosiel",cls:"Clérigo · humano",j:"Ato 2, acampamento",l:"Sai no Enxame",qs:[
+  {a:"Ato 2",k:"step",t:"A Veil of Silence",d:"Primeira missão pessoal dele. Guarde o escudo <b>Immaculate Petal</b> no inventário."},
+  {a:"Atos 2–3",k:"verify",t:"Pistas de Trever",d:"Siga as pistas do escudo e do impostor. Na Lost Chapel, peça a história completa aos sobreviventes."},
+  {a:"Ato 3",k:"missable",t:"Reencontro na arena",d:"Os irmãos lutam juntos contra os demônios. Escolha levar Trever para casa e ele vira companheiro secreto."}]},
+ {n:"Regill",cls:"Armiger / Hellknight · gnomo",j:"Ato 2, Walking by Hell",l:"Luta até a morte no Ato 5 se não confiar em você",qs:[
+  {a:"Ato 3",k:"step",t:"Watch Your Step",d:"No posto dos Hellknights. Também serve para recrutá-lo se você recusou antes."},
+  {a:"Ato 4",k:"step",t:"Close Inspection",d:"Deixe-o investigar; use Percepção nas interações."},
+  {a:"Ato 5",k:"missable",t:"The Final Verdict",d:"O tribunal julga o Comandante. Ganhe respeito com disciplina, pragmatismo e autoridade. Compaixão demais e acordos com demônios o deixam desconfiado. Salve antes."}]},
+ {n:"Arueshalae",cls:"Súcubo em redenção",j:"Ato 2 (prisão de Drezen) ou Ato 3",l:"Sai no Demônio (não corrompida), Azata (corrompida) e Enxame",qs:[
+  {a:"Ato 2",k:"step",t:"Visit Arueshalae in Prison",d:"Com Starward Gaze e o Altar de Desna na Lost Chapel feitos, toque a canção de Elysium ao encontrá-la."},
+  {a:"Ato 3",k:"step",t:"Demon's Heresy",d:"Recrutamento alternativo, se faltou um pré-requisito."},
+  {a:"Ato 3",k:"step",t:"Borrowed Dreams",d:"Visite o sonho dela e os de Hilor, do Storyteller, de Arsinoe, Anevia e Irabeth. Termine falando com ela."},
+  {a:"Ato 3",k:"missable",t:"Dreams in Ruin",d:"Ponto de corrupção. Para redimir, <b>evite</b> a opção maligna. Antes de entrar, retire dela os itens que quer manter."},
+  {a:"Ato 4",k:"step",t:"A Conversation with Arueshalae",d:"Em Alushinyrra, não a leve às Ten Thousand Delights. Romance só depois de ela resolver o conflito."},
+  {a:"Ato 5",k:"verify",t:"Time to Think",d:"Fechamento da redenção. Final bom: cabana perto de Drezen."}]},
+ {n:"Greybor",cls:"Slayer · anão (mercenário)",j:"Ato 3, Dragon Hunt",l:"Contrato",qs:[
+  {a:"Ato 3",k:"step",t:"The Dragon Hunt",d:"Contrate e recontrate no fim da caçada para mantê-lo."},
+  {a:"Ato 4",k:"step",t:"A Conversation with Greybor",d:"Conversa pessoal."}]},
+ {n:"Trever",cls:"Irmão de Sosiel (secreto)",j:"Ato 3, arena",l:"—",qs:[]},
+ {n:"Aivu",cls:"Dragãozinho do Azata",j:"Ao escolher Azata",l:"Só Azata",qs:[]},
+ {n:"Staunton",cls:"Staunton Vhane",j:"Só Lich",l:"Só Lich",qs:[]},
+ {n:"Delamere",cls:"Patrulheira morta-viva",j:"Só Lich, Ato 3",l:"Só Lich",qs:[]},
+ {n:"Ciar",cls:"Morto-vivo",j:"Só Lich, Ato 3",l:"Só Lich",qs:[]},
+ {n:"Ulbrig",cls:"DLC The Last Sarkorians",j:"Após o Storyteller e a faca de cristal; taverna",l:"—",qs:[]}
+];
+COMPS.forEach(c=>c.qs.forEach((q,i)=>q.id=c.n+"-"+i));
+
+const ROMS = [
+ {n:"Arueshalae",g:"mf",br:["R1"],lock:"Forçar intimidade, flertar além do leve, respostas malignas (ela se corrompe e sai) ou mandá-la embora.",rw:"No sonho do Ato 5, só você aparece com ela.",st:[
+  ["Ato 2","Na prisão de Drezen, escolha a opção Azata (recrutamento antecipado)."],
+  ["Ato 3","Se ela só entrou agora, em Greengates elogie a beleza dela na resposta de flerte."],
+  ["Ato 3","Borrowed Dreams e Dreams in Ruin sem opção maligna."],
+  ["Ato 4","Time to Think e What Do You Dream Of; nada de levá-la às Ten Thousand Delights."],
+  ["Ato 5","Confirme o romance quando o jogo pedir a escolha."]]},
+ {n:"Sosiel",g:"m",br:["R2","R1"],lock:"Comandante cruel ou sem empatia.",rw:"Final mais caloroso se a história do irmão terminar bem.",st:[
+  ["Ato 2","Respostas de compaixão, apreço pela arte e pela beleza (Shelyn)."],
+  ["Atos 2–3","Missão de Trever com empatia e foco em redenção."],
+  ["Atos 3–4","Seja o apoio dele para manter a fé no meio da guerra."],
+  ["Ato 5","Confirme o romance na escolha final."]]},
+ {n:"Lann",g:"f",br:["R2","R4"],lock:"Deixá-lo morrer em The Last Resort; ficar do lado de Wenduag no prólogo atrasa tudo.",rw:"Lann's Beads: +2 moral em Concentração, Iniciativa e Vontade.",st:[
+  ["Prólogo","Mostre a Luz ao chefe mongrel (lado de Lann)."],
+  ["Ato 1","Conversas de taverna sobre amor e futuro com apoio."],
+  ["Ato 3","Back to Roots ao lado dele."],
+  ["Ato 5","Seeking Forgiveness e The Last Resort com ele vivo."]]},
+ {n:"Daeran",g:"mf",br:["R5","R3"],lock:"Confiança abaixo de 25 no Ato 5; poucos gatilhos de afeto.",rw:"Fica livre do inquisidor e o romance verdadeiro se confirma.",st:[
+  ["Ato 2","Festa de aniversário: distraia, não o faça trabalhar, apoie."],
+  ["Atos 3–4","Pelo menos 2 gatilhos de afeto (bilhete na mansão, sonho com o Outro, Battlebliss, Chivarro)."],
+  ["Ato 4","No encontro no Abismo, comente o comportamento dele e diga que se importa."],
+  ["Ato 5","Confiança 25+ com Liotr."]]},
+ {n:"Camellia",g:"m",br:["R3","R5"],lock:"Caminhos Aeon, Lich e Enxame; julgar a natureza dela.",rw:"Final varia com o caminho e com o quanto você aceita o hobby dela.",st:[
+  ["Ato 1","Gwerm Family Secrets: descubra o segredo e aceite guardá-lo."],
+  ["Ato 3","Após o ritual, no prédio abandonado de Drezen, apoie com opções caóticas ou malignas e aceite a oferta."],
+  ["Atos 4–5","Nas cenas de vinho no acampamento, aceite a exclusividade e planeje novos rituais."],
+  ["Ato 4","Em Alushinyrra, aceite a natureza dela sem julgamento pesado."]]},
+ {n:"Wenduag",g:"mf",br:["—"],lock:"Perder o Respeito dela leva à traição. Exige ter ficado com ela no prólogo.",rw:"Mongrel's Blessing permanente.",st:[
+  ["Prólogo","Fique do lado de Wenduag (Lann só volta no Ato 5). Isso muda o início da run inteira."],
+  ["Ato 3","Imponha domínio no treino; resolva as transgressões dela em particular, sem acusar."],
+  ["Ato 4","Ganhe dela na bebida na Bad Luck Tavern; apoie quando ferida no Nexus; avise sem acusar quando ela sumir."],
+  ["Ato 5","Tranquilize, conclua a missão dela e aceite o veneno de Savamelekh."]]},
+ {n:"Galfrey",g:"mf",br:["R7"],lock:"Exige Anjo, Aeon, Dragão Dourado ou Lenda e nenhum outro romance confirmado. Convidá-la fecha o Enxame.",rw:"Ela vira aliada poderosa no fim e libera a conquista A Flame.",st:[
+  ["Ato 2","Do save A2-GALFREY, convide-a a vir incógnita e flerte na fase de cavaleira."],
+  ["Ato 4","Boa gestão da cruzada, Lexicon of Paradox como presente opcional, conversas com o Storyteller."],
+  ["Ato 5","Não a deixe morrer em Iz; fale da carta de despedida e escolha romance, não amizade."]]}
+];
+ROMS.forEach(r=>r.st.forEach((x,i)=>x.id="rm-"+r.n+"-"+i));
+
+const MC_PLAN = [
+ [1,"Humano, +2 Car. Atributos (25 pontos): For 7, Des 14, Con 14, Int 10, Sab 10, Car 18 → 20. Talentos: Spell Focus (Evocação) e Improved Initiative (bônus humano). Linhagem: Arcane."],
+ [2,"Mythic Hero chega pelos ranks míticos, não pelo nível. Magias de 1º: Magic Missile, Mage Armor, Grease."],
+ [3,"Spell Penetration."],
+ [4,"+1 Car. Magias de 2º: Scorching Ray e Glitterdust."],
+ [5,"Greater Spell Focus (Evocação)."],
+ [6,"Magias de 3º: Haste (prioridade no tempo real) e Fireball."],
+ [7,"Greater Spell Penetration. Talento de linhagem: Extend Spell."],
+ [8,"+1 Car. Magias de 4º: Greater Invisibility e Stoneskin."],
+ [9,"Quicken Spell."],
+ [10,"Magias de 5º: Cone of Cold e mais um controle de área."],
+ [11,"Empower Spell."],
+ [12,"+1 Car. Magias de 6º: Chain Lightning e Disintegrate."],
+ [13,"Persistent Spell. Talento de linhagem: Maximize Spell."],
+ [14,"Magias de 7º: escolha uma de dano em área e uma de defesa."],
+ [15,"Dazing Spell."],
+ [16,"+1 Car. Magias de 8º: Polar Ray."],
+ [17,"Reach Spell."],
+ [18,"Magias de 9º: uma de dano máximo e uma de utilidade."],
+ [19,"Spell Focus (Conjuração). Talento de linhagem: metamagia restante."],
+ [20,"+1 Car. Capstone da linhagem Arcane."]
+];
+const MYTHIC_PLAN = [
+ ["MR1–2","Mythic Hero. Talento mítico no MR2: Improved Initiative (Mythic) ou Spell Focus (Mythic)."],
+ ["MR3","Escolha do caminho no Save Mestre. Se o caminho oferecer fundir o grimório do Feiticeiro com o mítico, aceite."],
+ ["MR3–7","Habilidades: priorize mais magias por dia (Abundant Casting) e a melhor habilidade de dano do caminho."],
+ ["MR4/6","Talentos míticos: Spell Penetration (Mythic) e Toughness (Mythic)."],
+ ["MR8","Re-escolha no R1 (Dragão, Enxame, Lenda). Na Lenda você perde quase todas as habilidades míticas e ganha níveis até 40."],
+ ["MR9–10","Fechar os talentos míticos de conjuração restantes."]
+];
+const COMP_BUILDS = [
+ {n:"Seelah",r:"Tanque",cls:"Paladina pura",at:"For > Car > Con",ft:["Power Attack","Shield Focus","Weapon Focus","Improved Critical","Outflank","Toughness","Iron Will","Step Up"],ab:"Smite Evil nos chefes, Lay on Hands no automático. Magias: Bless Weapon, Shield of Faith, Divine Favor, Resist Energy.",sw:"Lich e Enxame: sai. Regill assume o tanque."},
+ {n:"Regill",r:"Linha de frente",cls:"Armiger + Hellknight (já vem pronto no nível 6)",at:"Des/For > Con",ft:["Combat Reflexes","Power Attack","Cornugon Smash","Weapon Focus","Improved Critical","Outflank"],ab:"Arma de haste para atacar atrás de Seelah. Cornugon Smash intimida a cada Power Attack.",sw:"No Lich vira o tanque principal."},
+ {n:"Lann",r:"Atirador",cls:"Monge Zen Archer puro",at:"Sab > Des > Con",ft:["Point-Blank Shot","Precise Shot","Rapid Shot","Deadly Aim","Manyshot","Weapon Focus (arco longo)","Improved Critical"],ab:"Zen Archery usa Sabedoria para acertar; Perfect Strike nos chefes. Arco longo composto.",sw:"Fica em todos os ramos, menos Enxame."},
+ {n:"Daeran",r:"Cura e suporte",cls:"Oráculo puro",at:"Car > Des > Con",ft:["Extend Spell","Toughness","Quicken Spell","Spell Focus (Encantamento)","Spell Penetration"],ab:"Cura em massa e remoção de condições: Prayer, Restoration, Death Ward, Breath of Life, Heal.",sw:"Salve antes do Ato 5 dele (risco de prisão ou morte)."},
+ {n:"Woljif",r:"Armadilhas e dano",cls:"Eldritch Scoundrel puro",at:"Des > Int > Con",ft:["Weapon Finesse","Two-Weapon Fighting","Outflank","Improved Critical","Accomplished Sneak Attacker"],ab:"Perícias no máximo: Trickery (armadilhas e fechaduras) e Perception. Magias: Mirror Image, Blur, Haste.",sw:"Substitui Camellia no Aeon."},
+ {n:"Camellia",r:"Alternativa de utilidade",cls:"Shaman Spirit Hunter",at:"Des > Sab > Con",ft:["Weapon Finesse","Fencing Grace","Dodge","Outflank","Combat Reflexes"],ab:"Rapieira e broquel; magias Barkskin, Blur, Shield of Faith, Mirror Image.",sw:"Sai no Aeon."}
+];
+const ALT_BUILDS = [
+ ["Sosiel","Clérigo com glaive. Sab > For > Con. Selective Channeling, Spell Focus, Extend Spell. Domínios Community e Good."],
+ ["Ember","Bruxa pura. Car. Spell Focus, Greater Spell Focus, Spell Penetration. Hexes como mecânica central; Slumber e Evil Eye."],
+ ["Nenio","Maga pura (Ilusão e Conjuração). Int. Grease, Glitterdust, Phantasmal Killer, Haste, Weird."],
+ ["Arueshalae","Patrulheira com arco. Des > Sab > Con. Mesma linha de talentos de arqueiro do Lann; Favored Enemy (demônios)."],
+ ["Wenduag","Guerreira com arco. Des > For > Con. Rapid Shot, Manyshot, Deadly Aim, Weapon Training, Greater Weapon Specialization."]
+];
+const COMP_ST = ["Não recrutado","No grupo","Missão pessoal concluída","Saiu / perdido"];
+
+/* ===================== ESTADO ===================== */
+let S = {done:{},saves:{},comps:{},notes:{},cq:{},filter:"all",hideDone:false};
+let store = {mode:"local",ref:null};
+const LKEY = "wotr-cruzada-app-v1";
+function loadLocal(){try{const r=localStorage.getItem(LKEY);if(r)Object.assign(S,JSON.parse(r))}catch(e){}}
+function saveLocal(){try{localStorage.setItem(LKEY,JSON.stringify(S))}catch(e){}}
+let tSave=null;
+function persist(){
+  saveLocal();
+  clearTimeout(tSave);
+  tSave=setTimeout(async()=>{
+    if(store.ref){try{await store.ref.set({state:JSON.stringify(S),at:Date.now()});setSync("Salvo neste aparelho")}catch(e){setSync("Salvo neste aparelho")}}
+    else setSync("Salvo neste aparelho");
+  },600);
+}
+function setSync(t){document.getElementById("sync").textContent=t}
+async function initStore(){
+  loadLocal(); applyTheme(); renderAll(); setSync("Salvo neste aparelho");
+}
+
+/* ===================== UTIL ===================== */
+const $=s=>document.querySelector(s);
+const esc=s=>String(s).replace(/[&<>"]/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]));
+const pc=k=>`style="--pc:var(${PATHS[k].c})"`;
+const kindLabel={missable:"Perdível",choice:"Escolha-chave",save:"Save",verify:"Confirmar no jogo"};
+function pathStatus(k){
+  const r=REQ[k]; const tot=r.steps.length; const d=r.steps.filter(id=>S.done[id]).length;
+  if(k==="legend")return{d,tot,lab:"Sempre disponível",cls:"ok"};
+  if(tot&&d===tot)return{d,tot,lab:"Liberado",cls:"ok"};
+  const firstOpen=r.steps.find(id=>!S.done[id]); const st=STEPS.find(s=>s.id===firstOpen);
+  const cur=currentActIndex(); const stAct=ACTS.findIndex(a=>a.id===st.a);
+  if(stAct<cur && st.k==="missable")return{d,tot,lab:"Em risco",cls:"bad",next:st};
+  return{d,tot,lab:d?"Em andamento":"Pendente",cls:d?"warn":"info",next:st};
+}
+function currentActIndex(){let idx=0;ACTS.forEach((a,i)=>{if(STEPS.some(s=>s.a===a.id&&S.done[s.id]))idx=i});return idx}
+
+/* ===================== PAINEL ===================== */
+function renderPainel(){
+  const total=STEPS.length, done=STEPS.filter(s=>S.done[s.id]).length;
+  const cur=currentActIndex();
+  const acts=ACTS.map(a=>{const st=STEPS.filter(s=>s.a===a.id);const d=st.filter(s=>S.done[s.id]).length;return`<div class="act-row"><div class="t"><span>${a.n}</span><span class="num">${d}/${st.length}</span></div><div class="bar"><i style="width:${st.length?d/st.length*100:0}%"></i></div></div>`}).join("");
+  const order=["angel","demon","aeon","azata","trickster","lich","dragon","swarm","devil","legend","secret"];
+  const cards=order.map(k=>{const r=REQ[k],s=pathStatus(k);
+    const items=r.steps.map(id=>{const st=STEPS.find(x=>x.id===id);return`<li class="${S.done[id]?"d":""}">${esc(st.t)}</li>`}).join("");
+    return`<div class="path" ${pc(k)}><div class="h"><b>${PATHS[k].n}</b><span class="pill ${s.cls}">${s.lab}</span></div><div class="meta">Escolha em <b>${r.at}</b> · ${PATHS[k].al} · <span class="num">${s.d}/${s.tot}</span></div>${items?`<ul>${items}</ul>`:""}<div class="meta">${esc(r.note)}</div></div>`}).join("");
+  const pend=STEPS.filter(s=>!S.done[s.id]).sort((a,b)=>{const pa=ACTS.findIndex(x=>x.id===a.a),pb=ACTS.findIndex(x=>x.id===b.a);if(pa!==pb)return pa-pb;const w={missable:0,choice:1,save:2,verify:3,step:4};return w[a.k]-w[b.k]}).slice(0,6);
+  const next=pend.map(s=>`<div class="n"><span class="a">${ACTS.find(a=>a.id===s.a).n}</span><div><span class="st-title">${esc(s.t)}</span> ${s.k!=="step"?`<span class="kind ${s.k}">${kindLabel[s.k]}</span>`:""}</div></div>`).join("")||"<p>Tudo marcado.</p>";
+  const mestre=S.done["a2m"];
+  $("#painel").innerHTML=`
+   <div class="callout"><b>Como a run funciona.</b> Nenhum save único abre os 10 caminhos ao mesmo tempo, porque o jogo pede a escolha em três momentos: <b>MR3</b> (fim do Ato 2), <b>MR8</b> (Ato 5) e <b>MR9</b> (Diabo). Além disso, escolher Aeon na Wardstone fecha o final secreto. A estratégia é uma <b>árvore com duas linhas</b>: a Linha A cumpre tudo menos o Aeon, cria o <b>Save Mestre A</b> no MR3 e segue cinco ramos (o Azata concentra Dragão, Enxame, Lenda, Diabo e o segredo). A Linha B sai do save do fim do Ato 1 só para Aeon e Galfrey.</div>
+   <div class="grid2">
+     <div class="panel stack"><div><div class="label">Progresso geral</div><p class="num" style="font-size:1.6rem">${done} <span style="color:var(--muted);font-size:1rem">de ${total} passos</span></p><div class="bar"><i style="width:${done/total*100}%"></i></div></div><div class="acts">${acts}</div>
+     <p class="meta" style="color:var(--muted);font-size:.88rem">Você está no <b style="color:var(--fg)">${ACTS[cur].n}</b>. ${mestre?"Save Mestre criado: siga pela Árvore de saves.":"Save Mestre ainda não criado."}</p></div>
+     <div class="panel stack"><div class="label">Próximos passos importantes</div><div class="next">${next}</div><button class="btn ghost" data-go="roteiro" style="align-self:flex-start">Abrir o roteiro</button></div>
+   </div>
+   <div><h2>Caminhos míticos</h2><p class="lede">O status atualiza conforme você marca o roteiro. "Em risco" significa que um passo perdível ficou para trás num ato já passado.</p></div>
+   <div class="paths">${cards}</div>`;
+}
+
+/* ===================== ROTEIRO ===================== */
+function renderRoteiro(){
+  const fks=["all","angel","demon","aeon","azata","trickster","lich","dragon","swarm","devil","legend","secret","comps","crit"];
+  const fname={all:"Tudo",comps:"Aliados",crit:"Só perdíveis e escolhas"};
+  const chips=fks.map(k=>`<button class="chip" aria-pressed="${S.filter===k}" data-filter="${k}" ${PATHS[k]?pc(k):""}>${PATHS[k]?`<span class="dot"></span>${PATHS[k].n}`:fname[k]}</button>`).join("");
+  const match=s=>{if(S.hideDone&&S.done[s.id])return false;if(S.filter==="all")return true;if(S.filter==="comps")return(s.c||[]).length>0;if(S.filter==="crit")return["missable","choice","save"].includes(s.k);return s.p.includes(S.filter)};
+  const curA=currentActIndex();
+  const acts=ACTS.map((a,i)=>{
+    const all=STEPS.filter(s=>s.a===a.id); const vis=all.filter(match); const d=all.filter(s=>S.done[s.id]).length;
+    const rows=vis.map(s=>{
+      const tags=s.p.map(k=>`<span class="tag" ${pc(k)}><span class="dot"></span>${PATHS[k].n}</span>`).join("")+(s.c||[]).map(c=>`<span class="tag">${esc(c)}</span>`).join("");
+      const note=S.notes[s.id]||"";
+      return`<div class="step ${S.done[s.id]?"done":""} kind-${s.k}"><input type="checkbox" id="ck-${s.id}" data-step="${s.id}" ${S.done[s.id]?"checked":""} aria-label="${esc(s.t)}"><div><div class="st-head"><label class="st-title" for="ck-${s.id}">${esc(s.t)}</label>${s.k!=="step"?`<span class="kind ${s.k}">${kindLabel[s.k]}</span>`:""}</div><p class="st-body">${s.d}</p>${tags?`<div class="tags">${tags}</div>`:""}<button class="note-btn" data-note="${s.id}">${note?"Editar nota":"Adicionar nota"}</button>${note?`<textarea id="nt-${s.id}" data-notefield="${s.id}">${esc(note)}</textarea>`:""}</div></div>`}).join("");
+    return`<details class="act" ${i===curA||S.filter!=="all"?"open":""}><summary><span class="chev" aria-hidden="true">›</span><h3>${a.n}</h3><span style="color:var(--muted);font-size:.9rem">${a.s}</span><span class="sp"><span class="num">${d}/${all.length}</span><span class="bar" style="width:80px"><i style="width:${d/all.length*100}%"></i></span></span></summary><div class="steps">${rows||`<div class="step"><span></span><p class="st-body">Nenhum passo deste ato com o filtro atual${S.hideDone?" (concluídos ocultos)":""}. Escolha <b>Tudo</b> para ver o ato completo.</p></div>`}</div></details>`}).join("");
+  $("#roteiro").innerHTML=`
+   <div><h2>Roteiro de progressão</h2><p class="lede">Marque cada passo ao concluir. Do Ato 3 em diante, os passos valem para o ramo que você estiver jogando; use as notas para registrar em qual ramo fez.</p></div>
+   <div class="filters">${chips}<label class="chip" style="display:inline-flex;gap:6px;align-items:center"><input type="checkbox" id="hide-done" ${S.hideDone?"checked":""}> Ocultar concluídos</label></div>
+   <div class="stack">${acts||"<p class='lede'>Nada para mostrar com este filtro.</p>"}</div>`;
+}
+
+/* ===================== SAVES ===================== */
+function renderSaves(){
+  const W=900,H=470;
+  const A=BRANCHES.filter(b=>b.ln==="A"), B=BRANCHES.filter(b=>b.ln==="B");
+  const node=(x,y,t1,t2)=>`<rect x="${x-62}" y="${y-22}" width="124" height="44" rx="6" fill="var(--surface)" stroke="var(--accent)" stroke-width="2"/><text x="${x}" y="${y-3}" text-anchor="middle" fill="var(--fg)" font-size="12" font-family="var(--display)">${t1}</text><text x="${x}" y="${y+13}" text-anchor="middle" fill="var(--muted)" font-size="10" font-family="var(--mono)">${t2}</text>`;
+  const lab=(x,y,t,c)=>`<circle cx="${x}" cy="${y}" r="6" fill="var(${c})"/><text x="${x+12}" y="${y+4}" fill="var(--fg)" font-size="13" font-family="var(--body)">${t}</text>`;
+  const curve=(x1,y1,x2,y2,c,o,d)=>`<path d="M${x1} ${y1} C ${(x1+x2)/2} ${y1}, ${(x1+x2)/2} ${y2}, ${x2} ${y2}" fill="none" stroke="var(${c})" stroke-width="2" opacity="${o}" ${d?'stroke-dasharray="4 3"':''}/>`;
+  let svg=`<svg viewBox="0 0 ${W} ${H}" role="img" aria-label="Árvore de saves">`;
+  const wx=80, wy=230, ax=300, ay=130, bx=300, by=390, rx=470;
+  svg+=`<text x="10" y="${wy-30}" fill="var(--muted)" font-size="11" font-family="var(--body)">Prólogo e Ato 1</text>`;
+  svg+=curve(wx+62,wy,ax-62,ay,"--accent",1)+curve(wx+62,wy,bx-62,by,"--p-aeon",1,true);
+  svg+=`<text x="${(wx+ax)/2-20}" y="${ay+40}" fill="var(--muted)" font-size="10" font-family="var(--body)">sem Aeon · recusa Galfrey</text><text x="${(wx+bx)/2-10}" y="${by-28}" fill="var(--muted)" font-size="10" font-family="var(--body)">Aeon · aceita Galfrey</text>`;
+  A.forEach((b,i)=>{const y=40+i*46;svg+=curve(ax+62,ay,rx-6,y,PATHS[b.p].c,S.saves[b.sub[0][0]]?1:.55)+lab(rx,y,b.id+" · "+PATHS[b.p].n,PATHS[b.p].c)});
+  B.forEach((b,i)=>{const y=370+i*46;svg+=curve(bx+62,by,rx-6,y,PATHS[b.p].c,S.saves[b.sub[0][0]]?1:.55)+lab(rx,y,b.id+" · "+PATHS[b.p].n,PATHS[b.p].c)});
+  const y1=40, mx=640;
+  svg+=`<line x1="${rx+110}" y1="${y1}" x2="${mx-6}" y2="${y1}" stroke="var(--p-azata)" stroke-width="2"/><rect x="${mx-6}" y="${y1-12}" width="56" height="24" rx="4" fill="var(--accent-soft)" stroke="var(--accent)"/><text x="${mx+22}" y="${y1+4}" text-anchor="middle" fill="var(--fg)" font-size="12" font-family="var(--mono)">MR8</text>`;
+  [["dragon","Dragão Dourado"],["swarm","Enxame"],["legend","Lenda"],["azata","Azata + segredo"]].forEach((o,i)=>{const yy=14+i*26,x2=770;svg+=curve(mx+50,y1,x2-6,yy,PATHS[o[0]].c,1)+`<circle cx="${x2}" cy="${yy}" r="4" fill="var(${PATHS[o[0]].c})"/><text x="${x2+9}" y="${yy+4}" fill="var(--fg)" font-size="11" font-family="var(--body)">${o[1]}</text>`});
+  svg+=curve(mx+50,y1+8,764,y1+90,"--p-devil",1,true)+`<circle cx="770" cy="${y1+90}" r="4" fill="var(--p-devil)"/><text x="779" y="${y1+94}" fill="var(--fg)" font-size="11" font-family="var(--body)">Diabo (MR9)</text>`;
+  svg+=node(wx,wy,"A1-WARDSTONE","fim do Ato 1")+node(ax,ay,"MESTRE A","tela do MR3")+node(bx,by,"MESTRE B","tela do MR3")+`</svg>`;
+  const total=BRANCHES.reduce((a,b)=>a+b.sub.length,0), got=BRANCHES.reduce((a,b)=>a+b.sub.filter(s=>S.saves[s[0]]).length,0);
+  const cards=BRANCHES.map(b=>`<div class="branch" ${pc(b.p)}><div class="row" style="justify-content:space-between"><h3>${b.id} · ${esc(b.t)}</h3><span class="num" style="color:var(--muted)">${b.sub.filter(s=>S.saves[s[0]]).length}/${b.sub.length}</span></div><p style="font-size:.88rem;color:var(--muted)">${esc(b.d)}</p>${b.sub.map(s=>`<label><input type="checkbox" data-save="${s[0]}" ${S.saves[s[0]]?"checked":""}> <span>${esc(s[1])} <code class="sv">${s[0]}</code></span></label>`).join("")}</div>`).join("");
+  $("#saves").innerHTML=`
+   <div><h2>Árvore de saves</h2><p class="lede">Marque cada final concluído. Total de conclusões nas duas linhas: <b class="num">${total}</b>. Concluídas: <b class="num">${got}</b>.</p></div>
+   <div class="panel tree">${svg}</div>
+   <div class="callout"><b>Duas linhas.</b> A <b>Linha A</b> (principal) não escolhe Aeon na Wardstone e recusa Galfrey: mantém o final secreto e o Enxame. A <b>Linha B</b> sai do mesmo save do fim do Ato 1, escolhe Aeon, aceita Galfrey e refaz o Ato 2 até o próprio Save Mestre. <b>Ordem:</b> R1 Azata primeiro (cinco finais e o segredo), depois R2, R3, R5 e R6; por último a Linha B. Nunca sobrescreva os saves A1-WARDSTONE, MESTRE A, MESTRE B, MR8 e MR9.</div>
+   <div class="branches">${cards}</div>
+   <div class="panel"><div class="label" style="margin-bottom:8px">Regras de ouro dos saves</div><ul class="tips">
+     <li>Faça um save manual antes de cada passo marcado como <b>Perdível</b> ou <b>Escolha-chave</b>.</li>
+     <li>No Enxame, todos os aliados saem. Jogue esse final por último no R1, usando o save MR8.</li>
+     <li>Para o Diabo, Malies precisa ter sido aceita no Ato 3 do R1 (ou do R4 Aeon).</li>
+     <li>Se aceitou a dádiva de Nocticula no Ato 4, a Lenda exige um teste difícil de Vontade no MR8.</li>
+   </ul></div>`;
+}
+
+/* ===================== ALIADOS ===================== */
+function renderAliados(){
+  const counts=[0,0,0,0]; COMPS.forEach(c=>counts[S.comps[c.n]||0]++);
+  S.cq=S.cq||{};
+  const allQ=COMPS.flatMap(c=>c.qs); const qd=allQ.filter(q=>S.cq[q.id]).length;
+  const cards=COMPS.map(c=>{const st=S.comps[c.n]||0; const d=c.qs.filter(q=>S.cq[q.id]).length;
+    const qs=c.qs.length?`<details class="cq" ${S.openC&&S.openC[c.n]?"open":""} data-cdet="${esc(c.n)}"><summary><span>Missões pessoais</span><span class="num">${d}/${c.qs.length}</span></summary>${c.qs.map(q=>`<div class="cqs ${S.cq[q.id]?"done":""}"><input type="checkbox" id="cq-${esc(q.id)}" data-cq="${esc(q.id)}" ${S.cq[q.id]?"checked":""}><div><label for="cq-${esc(q.id)}"><span class="num cqa">${q.a}</span> <b>${esc(q.t)}</b></label>${q.k!=="step"?` <span class="kind ${q.k}">${kindLabel[q.k]}</span>`:""}<p>${q.d}</p></div></div>`).join("")}</details>`:"";
+    return`<div class="comp"><div class="h"><b>${esc(c.n)}</b><select id="cs-${c.n}" data-comp="${esc(c.n)}" class="st-${st}" aria-label="Status de ${esc(c.n)}">${COMP_ST.map((t,i)=>`<option value="${i}" ${i===st?"selected":""}>${t}</option>`).join("")}</select></div><span class="cls">${esc(c.cls)}</span><dl><dt>Entra</dt><dd>${esc(c.j)}</dd><dt>Risco</dt><dd>${esc(c.l)}</dd></dl>${qs}</div>`}).join("");
+  $("#aliados").innerHTML=`
+   <div><h2>Aliados</h2><p class="lede">Até o Save Mestre você pode reunir Seelah, Camellia, Lann, Ember, Daeran, Nenio, Woljif, Finnean, Sosiel, Regill e, com sorte, Arueshalae. Wenduag, Greybor, Trever e os exclusivos de caminho entram depois, dentro de cada ramo.</p></div>
+   <div class="row"><span class="pill info">${counts[0]} não recrutados</span><span class="pill" style="color:var(--accent)">${counts[1]} no grupo</span><span class="pill ok">${counts[2]} com missão concluída</span><span class="pill bad">${counts[3]} perdidos</span><span class="pill info num">${qd}/${allQ.length} etapas de missões</span></div>
+   <div class="callout"><b>Ordem de segurança.</b> Salve antes de cada etapa marcada como <b>Perdível</b> ou <b>Escolha-chave</b>. As mais perigosas: a festa e o Ato 5 de Daeran, Dreams in Ruin da Arueshalae, The Final Verdict do Regill, The Final Drop da Camellia e o duelo do Ato 3 com Wenduag.</div>
+   <div class="comps">${cards}</div>
+   <div class="callout"><b>Pontos de perda.</b> Lich tira Seelah. Aeon tira Camellia. Demônio tira Arueshalae não corrompida; Azata tira Arueshalae corrompida. Enxame tira todos. Arueshalae corrompida pode voltar no Ato 5 (Place of Execution) se você for Lenda, Demônio, Lich ou Trickster.</div>`;
+}
+
+
+function renderRomances(){
+  S.rq=S.rq||{}; S.rb=S.rb||{}; const g=S.gender||"m";
+  const ok=r=>r.g.includes(g);
+  const def={m:{R1:"Arueshalae",R2:"Sosiel",R3:"Camellia",R4:"Daeran",R5:"Daeran",R6:"Nenhum",R7:"Galfrey"},f:{R1:"Arueshalae",R2:"Lann",R3:"Daeran",R4:"Lann",R5:"Daeran",R6:"Nenhum",R7:"Galfrey"}}[g];
+  const opts=["Nenhum",...ROMS.filter(ok).map(r=>r.n)];
+  const plan=BRANCHES.map(b=>{const v=S.rb[b.id]||def[b.id];return`<tr><td><b>${b.id}</b> · ${PATHS[b.p].n}</td><td><select id="rb-${b.id}" data-rb="${b.id}" aria-label="Romance do ramo ${b.id}">${opts.map(o=>`<option ${o===v?"selected":""}>${o}</option>`).join("")}</select></td><td style="color:var(--muted)">${b.id==="R6"?"A transformação do Lich no Ato 5 quebra qualquer romance.":b.id==="R7"||b.id==="R4"?"Linha B. Galfrey exige que nenhum outro romance esteja confirmado.":b.id==="R1"?"Romance continua válido nos finais Dragão, Lenda e Diabo deste ramo; no Enxame todos saem.":""}</td></tr>`}).join("");
+  const cards=ROMS.map(r=>{const d=r.st.filter(x=>S.rq[x.id]).length;const av=ok(r);
+    return`<div class="comp" style="${av?"":"opacity:.55"}"><div class="h"><b>${r.n}</b><span class="pill ${av?"info":"bad"}">${r.g==="mf"?"Qualquer gênero":r.g==="m"?"Só Comandante homem":"Só Comandante mulher"}</span></div><span class="cls">Ramos indicados: ${r.br.join(", ")} · <span class="num">${d}/${r.st.length}</span></span>${r.st.map(x=>`<div class="cqs ${S.rq[x.id]?"done":""}"><input type="checkbox" id="${x.id}" data-rq="${x.id}" ${S.rq[x.id]?"checked":""} ${av?"":"disabled"}><div><label for="${x.id}"><span class="num cqa">${x[0]}</span> <b>${esc(x[1])}</b></label></div></div>`).join("")}<dl><dt>Trava</dt><dd>${esc(r.lock)}</dd><dt>Recompensa</dt><dd>${esc(r.rw)}</dd></dl></div>`}).join("");
+  $("#romances").innerHTML=`
+   <div><h2>Romances</h2><p class="lede">Cada ramo da árvore é uma run separada a partir do mesmo save, então dá para viver um romance diferente em cada ramo. Escolha o gênero do seu Comandante para ver o que está disponível.</p></div>
+   <div class="row"><label class="label" for="gender">Comandante</label><select id="gender" data-gender="1"><option value="m" ${g==="m"?"selected":""}>Homem</option><option value="f" ${g==="f"?"selected":""}>Mulher</option></select></div>
+   <div class="callout"><b>Regras gerais.</b> Até o fim do Ato 4 você pode cultivar vários romances ao mesmo tempo. No começo do Ato 5 o jogo obriga a escolher um só: salve antes dessa cena em cada ramo. Galfrey é a exceção e exige que nenhum outro romance esteja confirmado. O romance completo com Wenduag exige ficar com ela no prólogo, o que muda a run inteira; por isso ele ficou fora da árvore principal.</div>
+   <div class="panel tbl"><div class="label" style="margin-bottom:8px">Plano: um romance por ramo</div><table><thead><tr><th>Ramo</th><th>Romance</th><th>Observação</th></tr></thead><tbody>${plan}</tbody></table></div>
+   <div class="comps">${cards}</div>`;
+}
+
+
+function renderAscensao(){
+  S.cnt=S.cnt||{bolts:0,crystals:0};
+  const st=STEPS.filter(x=>x.p.includes("secret")); const d=st.filter(x=>S.done[x.id]).length;
+  const c=S.cnt.crystals; const who=c>=6?"Comandante, todos os aliados e Areelu":c===5?"Comandante e todos os aliados (com missões pessoais concluídas)":c>=2?"Comandante e Areelu":c===1?"Só o Comandante":"Ninguém ainda";
+  const acts=ACTS.map(a=>{const l=st.filter(x=>x.a===a.id);if(!l.length)return"";return`<details class="act" open><summary><span class="chev" aria-hidden="true">›</span><h3>${a.n}</h3><span class="sp"><span class="num">${l.filter(x=>S.done[x.id]).length}/${l.length}</span></span></summary><div class="steps">${l.map(x=>`<div class="step ${S.done[x.id]?"done":""} kind-${x.k}"><input type="checkbox" id="as-${x.id}" data-step="${x.id}" ${S.done[x.id]?"checked":""}><div><div class="st-head"><label class="st-title" for="as-${x.id}">${esc(x.t)}</label>${x.k!=="step"?`<span class="kind ${x.k}">${kindLabel[x.k]}</span>`:""}</div><p class="st-body">${x.d}</p></div></div>`).join("")}</div></details>`}).join("");
+  const stepper=(k,lab,max)=>`<div class="stack" style="gap:6px"><span class="label">${lab}</span><div class="row"><button class="btn ghost" data-cnt="${k}" data-d="-1" aria-label="Diminuir ${lab}">−</button><span class="num" style="font-size:1.6rem;min-width:2ch;text-align:center">${S.cnt[k]}</span><button class="btn ghost" data-cnt="${k}" data-d="1" aria-label="Aumentar ${lab}">+</button><span style="color:var(--muted)" class="num">de ${max}</span></div></div>`;
+  $("#ascensao").innerHTML=`
+   <div><h2>Ascensão: o final secreto</h2><p class="lede">Só na Linha A e em qualquer caminho menos Lenda e Enxame. Um único passo perdido trava o final: salve antes de cada um marcado como Perdível. As marcações aqui são as mesmas do Roteiro.</p></div>
+   <div class="grid2">
+     <div class="panel stack"><div class="label">Progresso do checklist</div><p class="num" style="font-size:1.6rem">${d} <span style="color:var(--muted);font-size:1rem">de ${st.length}</span></p><div class="bar"><i style="width:${d/st.length*100}%"></i></div><p style="font-size:.88rem;color:var(--muted)">Janela final: entrar no Threshold entre 16 e 21 de Gozran.</p></div>
+     <div class="panel stack"><div class="row" style="gap:24px">${stepper("bolts","Midnight Bolts",5)}${stepper("crystals","Cristais Nahyndrianos",6)}</div><p style="font-size:.9rem"><b>Quem ascende:</b> ${who}.</p></div>
+   </div>
+   <div class="panel tbl"><div class="label" style="margin-bottom:8px">Midnight Bolts e cristais</div><table><thead><tr><th>Ato</th><th>Local</th></tr></thead><tbody>
+     <tr><td>Ato 1</td><td>Adaga roxa da Market Square (primeiro cristal)</td></tr>
+     <tr><td>Ato 3</td><td>Ivory Sanctum, câmara de Xanthir · Laboratório de Areelu</td></tr>
+     <tr><td>Ato 4</td><td>Palácio de Nocticula, sala do projetor · Minas · Baphomet atingido por uma bolt no fim do ato</td></tr>
+     <tr><td>Ato 5</td><td>Ruínas de Iz · Senhores Demônios derrotados com bolts</td></tr>
+   </tbody></table><p style="font-size:.85rem;color:var(--muted);margin-top:8px">1 cristal: só o Comandante · 2 a 4: Comandante e Areelu · 5: Comandante e aliados com missão concluída · 6 ou mais: todos e Areelu.</p></div>
+   <div class="stack">${acts}</div>`;
+}
+
+/* ===================== EQUIPE ===================== */
+function renderEquipe(){
+  const slots=[
+   ["Comandante (você)","Feiticeiro (Sorcerer), linhagem Arcane","Carisma como atributo principal, sem restrição de tendência. Serve em todos os ramos: Anjo e Azata somam cura e buffs, Lich e Trickster ampliam magias, Demônio e Dragão funcionam com transformações. Evite Paladino e Monge no Comandante, porque travam caminhos por tendência."],
+   ["Tanque","Seelah (Paladina)","Muita CA e salvaguardas, segura a linha sozinha no tempo real. No ramo Lich, troque por Regill ou Wenduag."],
+   ["Linha de frente 2","Regill (Hellknight) ou Wenduag","Regill dá controle e dano com armas de haste. Wenduag a partir do Ato 4."],
+   ["Atirador","Lann (Zen Archer)","Dano constante à distância sem microgerenciamento. Ideal para tempo real."],
+   ["Curandeiro e suporte","Daeran (Oráculo)","Cura em massa, remoção de condições e buffs. Mantém o grupo vivo quando o combate fica caótico."],
+   ["Utilidade e armadilhas","Woljif ou Camellia","Alguém precisa desarmar armadilhas e abrir fechaduras. Woljif cobre isso; Camellia rastreia e luta. Camellia sai no Aeon."]
+  ];
+  $("#equipe").innerHTML=`
+   <div><h2>Equipe e builds para tempo real</h2><p class="lede">Formação equilibrada que funciona em todos os ramos do Save Mestre. Respec de qualquer aliado com o NPC <b>Hilor</b>.</p></div>
+   <div class="party">${slots.map(s=>`<div class="slot"><span class="role">${s[0]}</span><b>${s[1]}</b><p>${s[2]}</p></div>`).join("")}</div>
+   <div class="panel tbl"><div class="label" style="margin-bottom:8px">Trocas por ramo</div><table><thead><tr><th>Ramo</th><th>Sai</th><th>Entra no lugar</th></tr></thead><tbody>
+     <tr><td>Anjo</td><td>—</td><td>Grupo padrão</td></tr>
+     <tr><td>Azata</td><td>Arueshalae, se corrompida</td><td>Aivu como reforço</td></tr>
+     <tr><td>Aeon</td><td>Camellia</td><td>Woljif para armadilhas</td></tr>
+     <tr><td>Demônio</td><td>Arueshalae não corrompida</td><td>Grupo padrão</td></tr>
+     <tr><td>Trickster</td><td>—</td><td>Grupo padrão</td></tr>
+     <tr><td>Lich</td><td>Seelah</td><td>Regill no tanque, Staunton ou Delamere</td></tr>
+     <tr><td>Enxame</td><td>Todos</td><td>Você e os enxames</td></tr>
+   </tbody></table></div>
+   <div class="panel"><div class="label" style="margin-bottom:8px">Ajustes para jogar em tempo real</div><ul class="tips">
+     <li>Ligue a pausa automática para início de combate, inimigo avistado e aliado com pouca vida. Tempo real com pausa nos momentos certos.</li>
+     <li>Rotina de buffs antes de cada luta difícil: buffs longos no descanso, curtos só no chefe.</li>
+     <li>Coloque Lann e o Comandante atrás; tanques na frente com formação manual.</li>
+     <li>Enxames de Leper's Smile drenam Constituição: leve dano em área e proteção.</li>
+     <li>Mantenha Lesser Restoration e Remove Paralysis em pergaminhos para os mortos-vivos da Lost Chapel.</li>
+   </ul></div>
+   ${buildsHTML()}`;
+}
+function buildsHTML(){
+  S.mc=S.mc||{}; S.bp=S.bp||{};
+  const lvDone=MC_PLAN.filter(x=>S.mc[x[0]]).length;
+  const rows=MC_PLAN.map(x=>`<tr class="${S.mc[x[0]]?"lvdone":""}"><td><input type="checkbox" id="mc-${x[0]}" data-mc="${x[0]}" ${S.mc[x[0]]?"checked":""} aria-label="Nível ${x[0]} feito"></td><td class="num"><label for="mc-${x[0]}">${x[0]}</label></td><td>${esc(x[1])}</td></tr>`).join("");
+  const myth=MYTHIC_PLAN.map(x=>`<tr><td class="num">${x[0]}</td><td>${esc(x[1])}</td></tr>`).join("");
+  const comps=COMP_BUILDS.map(c=>{const d=c.ft.filter((f,i)=>S.bp[c.n+i]).length;return`<div class="slot"><span class="role">${esc(c.r)}</span><div class="row" style="justify-content:space-between"><b>${c.n}</b><span class="num" style="color:var(--muted)">${d}/${c.ft.length}</span></div><p><b style="font-family:var(--body);font-size:.9rem;color:var(--fg)">${esc(c.cls)}</b> · atributos ${esc(c.at)}</p><div class="label" style="margin-top:4px">Talentos em ordem de prioridade</div>${c.ft.map((f,i)=>`<label class="ftl"><input type="checkbox" data-bp="${esc(c.n+i)}" ${S.bp[c.n+i]?"checked":""}> <span class="num" style="color:var(--muted)">${i+1}.</span> ${esc(f)}</label>`).join("")}<p>${esc(c.ab)}</p><p style="color:var(--warn)">${esc(c.sw)}</p></div>`}).join("");
+  return `
+   <div><h2>Builds detalhadas</h2><p class="lede">Plano base para o grupo recomendado. Marque cada nível e talento conforme for subindo. Os aliados chegam com níveis próprios; use o Hilor para refazer a ficha seguindo a ordem de prioridade.</p></div>
+   <div class="panel tbl"><div class="row" style="justify-content:space-between;margin-bottom:8px"><div class="label">Comandante · Feiticeiro (linhagem Arcane), nível a nível</div><span class="num" style="color:var(--muted)">${lvDone}/20</span></div><table><thead><tr><th></th><th>Nv</th><th>Escolha</th></tr></thead><tbody>${rows}</tbody></table></div>
+   <div class="panel tbl"><div class="label" style="margin-bottom:8px">Progressão mítica do Comandante</div><table><tbody>${myth}</tbody></table></div>
+   <div class="party">${comps}</div>
+   <div class="panel"><div class="label" style="margin-bottom:8px">Outros aliados, se precisar trocar</div><ul class="tips">${ALT_BUILDS.map(a=>`<li><b>${a[0]}:</b> ${esc(a[1])}</li>`).join("")}</ul></div>
+   <div class="callout"><b>Sobre estas builds.</b> As linhas gerais vêm de guias da comunidade; a distribuição exata por nível do Comandante é um plano meu, seguro para todos os ramos. Antes de travar uma magia de 7º nível ou superior, confira a lista do jogo, porque escolhi categorias e não nomes nesses níveis.</div>`;
+}
+
+/* ===================== BACKUP ===================== */
+function renderDados(){
+  $("#dados").innerHTML=`
+   <div><h2>Backup do progresso</h2><p class="lede">O progresso fica salvo neste aparelho. Copie o código abaixo para guardar ou levar a outro aparelho.</p></div>
+   <div class="panel stack"><label class="label" for="exp">Código do progresso</label><textarea id="exp" readonly style="min-height:110px;font-family:var(--mono);font-size:.78rem">${esc(JSON.stringify(S))}</textarea><div class="row"><button class="btn" id="copy">Copiar código</button><span id="copymsg" style="color:var(--muted);font-size:.85rem"></span></div></div>
+   <div class="panel stack"><label class="label" for="imp">Restaurar de um código</label><textarea id="imp" placeholder="Cole aqui o código copiado"></textarea><div class="row"><button class="btn ghost" id="doimp">Restaurar</button><span id="impmsg" style="font-size:.85rem"></span></div></div>
+   <div class="panel stack"><div class="label">Zerar</div><p style="font-size:.9rem;color:var(--muted)">Apaga todas as marcações, notas e saves registrados.</p><div class="row"><button class="btn danger" id="reset">Zerar progresso</button><button class="btn danger" id="reset2" hidden>Confirmar: apagar tudo</button></div></div>
+   <p style="font-size:.82rem;color:var(--muted);max-width:80ch">Fontes consultadas para os requisitos: guias da TechRaptor, PC Invasion, Fextralife e discussões da comunidade na Steam. Passos com "Confirmar no jogo" têm descrição menos consistente entre as fontes.</p>`;
+}
+
+function renderAll(){renderPainel();renderRoteiro();renderSaves();renderAliados();renderRomances();renderAscensao();renderEquipe();renderDados()}
+
+
+function copyText(ta){
+  const done=m=>{const el=$("#copymsg");if(el)el.textContent=m};
+  try{if(window.Android&&Android.share){Android.share(ta.value);done("Escolha onde guardar o código.");return}}catch(e){}
+  try{navigator.clipboard.writeText(ta.value).then(()=>done("Copiado.")).catch(()=>{ta.select();try{document.execCommand("copy");done("Copiado.")}catch(x){done("Selecionado. Copie manualmente.")}})}
+  catch(e){ta.select();try{document.execCommand("copy");done("Copiado.")}catch(x){done("Selecionado. Copie manualmente.")}}
+}
+function applyTheme(){const t=S.theme||DEFAULT_THEME;const r=document.documentElement;if(t==="system")r.removeAttribute("data-theme");else r.setAttribute("data-theme",t);
+  const dark=t==="dark"||(t==="system"&&matchMedia("(prefers-color-scheme: dark)").matches);const m=document.querySelector('meta[name=theme-color]');if(m)m.content=dark?"#1A1D28":"#FFFFFF";try{window.Android&&Android.setDark&&Android.setDark(dark)}catch(e){}}
+const _renderDados=renderDados;
+renderDados=function(){_renderDados();const t=S.theme||DEFAULT_THEME;
+  $("#dados").insertAdjacentHTML("afterbegin",`<div><h2>Ajustes</h2></div><div class="panel stack"><label class="label" for="theme-sel">Tema</label><select id="theme-sel" data-themesel="1"><option value="system" ${t==="system"?"selected":""}>Seguir o sistema</option><option value="light" ${t==="light"?"selected":""}>Claro</option><option value="dark" ${t==="dark"?"selected":""}>Escuro</option></select><p style="font-size:.88rem;color:var(--muted)">Para trazer o progresso do Mapa da Cruzada no Claude, copie o código na aba Backup de lá e cole em "Restaurar" abaixo.</p></div>`)};
+document.addEventListener("change",e=>{if(e.target.dataset&&e.target.dataset.themesel){S.theme=e.target.value;persist();applyTheme()}});
+
+/* ===================== EVENTOS ===================== */
+let CUR="painel";
+function showTab(t){CUR=t;document.body.dataset.tab=t;document.querySelectorAll("[role=tab]").forEach(b=>b.setAttribute("aria-selected",b.dataset.tab===t));document.querySelectorAll("[role=tabpanel]").forEach(p=>p.hidden=p.id!==t);try{history.replaceState(null,"","#"+t)}catch(e){}window.scrollTo(0,0)}
+document.addEventListener("click",e=>{const b=e.target.closest("[data-tab]");if(b){showTab(b.dataset.tab);closeSheet&&closeSheet()}});
+document.addEventListener("click",e=>{
+  const go=e.target.closest("[data-go]");if(go){showTab(go.dataset.go);return}
+  const cb=e.target.closest("[data-cnt]");if(cb){S.cnt=S.cnt||{bolts:0,crystals:0};const k=cb.dataset.cnt,mx=k==="bolts"?5:6;S.cnt[k]=Math.max(0,Math.min(mx,(S.cnt[k]||0)+ +cb.dataset.d));persist();renderAscensao();return}
+  const f=e.target.closest("[data-filter]");if(f){S.filter=f.dataset.filter;persist();renderRoteiro();return}
+  const n=e.target.closest("[data-note]");if(n){const id=n.dataset.note;if(S.notes[id]===undefined||S.notes[id]==="")S.notes[id]=" ";renderRoteiro();const ta=document.getElementById("nt-"+id);if(ta){ta.focus();if(ta.value===" ")ta.value=""}return}
+  if(e.target.id==="copy"){const ta=$("#exp");copyText(ta)}
+  if(e.target.id==="doimp"){try{const o=JSON.parse($("#imp").value);if(!o.done)throw 0;S=Object.assign({done:{},saves:{},comps:{},notes:{},filter:"all",hideDone:false},o);persist();renderAll();showTab("dados");$("#impmsg").textContent="Progresso restaurado."}catch(x){$("#impmsg").textContent="Código inválido. Cole o texto completo copiado do backup."}}
+  if(e.target.id==="reset"){$("#reset2").hidden=false}
+  if(e.target.id==="reset2"){S={done:{},saves:{},comps:{},notes:{},filter:"all",hideDone:false};persist();renderAll();showTab("dados")}
+});
+document.addEventListener("change",e=>{
+  const t=e.target;
+  if(t.dataset.step){S.done[t.dataset.step]=t.checked;if(!t.checked)delete S.done[t.dataset.step];persist();renderPainel();renderRoteiro();renderSaves();renderAscensao();return}
+  if(t.dataset.save){S.saves[t.dataset.save]=t.checked;persist();renderSaves();return}
+  if(t.dataset.mc){S.mc=S.mc||{};if(t.checked)S.mc[t.dataset.mc]=true;else delete S.mc[t.dataset.mc];persist();renderEquipe();return}
+  if(t.dataset.bp){S.bp=S.bp||{};if(t.checked)S.bp[t.dataset.bp]=true;else delete S.bp[t.dataset.bp];persist();renderEquipe();return}
+  if(t.dataset.rq){S.rq=S.rq||{};if(t.checked)S.rq[t.dataset.rq]=true;else delete S.rq[t.dataset.rq];persist();renderRomances();return}
+  if(t.dataset.rb){S.rb=S.rb||{};S.rb[t.dataset.rb]=t.value;persist();return}
+  if(t.dataset.gender){S.gender=t.value;persist();renderRomances();return}
+  if(t.dataset.cq){S.cq=S.cq||{};if(t.checked)S.cq[t.dataset.cq]=true;else delete S.cq[t.dataset.cq];persist();renderAliados();return}
+  if(t.dataset.comp){S.comps[t.dataset.comp]=+t.value;persist();renderAliados();return}
+  if(t.id==="hide-done"){S.hideDone=t.checked;persist();renderRoteiro()}
+});
+document.addEventListener("toggle",e=>{const n=e.target.dataset&&e.target.dataset.cdet;if(n){S.openC=S.openC||{};S.openC[n]=e.target.open;saveLocal()}},true);
+document.addEventListener("input",e=>{const id=e.target.dataset.notefield;if(id){S.notes[id]=e.target.value;persist()}});
+
+const h=(location.hash||"").slice(1);
+initStore();platformInit();
+if(["painel","roteiro","saves","aliados","romances","ascensao","equipe","dados"].includes(h))showTab(h);
+</script></body></html>

@@ -1,0 +1,31 @@
+MAPA DA CRUZADA - VERSAO ANDROID
+
+Esta pasta é um projeto pronto para virar app de Android de duas formas.
+As duas usam uma conta gratuita do GitHub (github.com).
+
+PASSO COMUM: ENVIAR PARA O GITHUB
+1. Crie uma conta em github.com e clique em "New repository".
+   Nome sugerido: mapa-da-cruzada. Marque "Public". Crie.
+2. Na página do repositório, clique em "uploading an existing file".
+3. Arraste TODO o conteúdo desta pasta (inclusive a pasta .github,
+   que pode estar oculta) e clique em "Commit changes".
+
+FORMA 1 - APK (app instalado de verdade)
+4. Abra a aba "Actions". O processo "Gerar APK" roda sozinho
+   (leva uns 5 minutos). Se pedir, clique em "I understand... enable".
+5. Quando ficar verde, clique nele e baixe "MapaDaCruzada-APK".
+6. Abra o .zip no celular e toque em "app-debug.apk".
+   O Android vai pedir para permitir instalar apps desta origem: permita.
+7. O ícone "Mapa da Cruzada" aparece na tela inicial.
+
+FORMA 2 - APP PELO CHROME (sem APK)
+4. No repositório: Settings > Pages > Branch "main", pasta "/docs" > Save.
+5. Em 1 ou 2 minutos aparece o endereço do site. Abra no Chrome do celular.
+6. Menu (três pontos) > "Instalar app" ou "Adicionar à tela inicial".
+   Depois da primeira abertura, funciona offline.
+
+TRAZER O PROGRESSO
+No Mapa da Cruzada do Claude (ou do PC), abra Backup > Copiar código.
+No celular, abra Mais > Backup e ajustes > Restaurar, cole e confirme.
+No APK, o botão "Copiar código" abre o menu de compartilhar do Android,
+para você guardar o código onde preferir.
